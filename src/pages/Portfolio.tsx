@@ -4,13 +4,21 @@ import { getGalleryItems } from "@/lib/gallery-store";
 import { useState, useEffect } from "react";
 import type { GalleryItem } from "@/lib/gallery-store";
 import sample1 from "@/assets/gallery-sample-1.jpg";
+import sample2 from "@/assets/gallery-sample-2.jpg";
 import sample3 from "@/assets/gallery-sample-3.jpg";
+import sample4 from "@/assets/gallery-sample-4.jpg";
+import sample5 from "@/assets/gallery-sample-5.jpg";
+import sample6 from "@/assets/gallery-sample-6.jpg";
 import heroImg from "@/assets/hero-nails.jpg";
 
 const defaultItems = [
   { id: "d1", imageUrl: heroImg, description: "Rose gold chrome with crystal accents ✨", createdAt: "" },
   { id: "d2", imageUrl: sample1, description: "Our premium pink polish collection 💅", createdAt: "" },
   { id: "d3", imageUrl: sample3, description: "50 shades of pink — which is your fave? 💖", createdAt: "" },
+  { id: "d4", imageUrl: sample4, description: "Hot pink chrome finish 💕", createdAt: "" },
+  { id: "d5", imageUrl: sample2, description: "Soft pink gel with shimmer ✨", createdAt: "" },
+  { id: "d6", imageUrl: sample5, description: "Pink glitter collection on display 💎", createdAt: "" },
+  { id: "d7", imageUrl: sample6, description: "Pink ombré perfection 🌸", createdAt: "" },
 ];
 
 const Portfolio = () => {
@@ -34,7 +42,7 @@ const Portfolio = () => {
             <Sparkles className="h-5 w-5 text-primary" />
             <span className="text-sm font-body tracking-[0.3em] uppercase text-primary">My Work</span>
           </div>
-          <h1 className="font-display text-5xl font-bold text-foreground">Portfolio</h1>
+          <h1 className="font-display text-5xl font-bold text-foreground">My Work</h1>
           <p className="text-muted-foreground font-body mt-4 max-w-lg mx-auto">
             Browse through my latest nail art creations. Every set is unique!
           </p>
