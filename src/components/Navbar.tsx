@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
   { label: "Home", path: "/" },
   { label: "Services", path: "/services" },
-  { label: "Portfolio", path: "/portfolio" },
+  { label: "My Work", path: "/portfolio" },
   { label: "Book Now", path: "/book" },
 ];
 
@@ -25,45 +24,23 @@ const Navbar = () => {
           </span>
         </Link>
 
-        {/* Desktop */}
-        <div className="hidden md:flex items-center gap-8">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`font-body text-sm tracking-widest uppercase transition-colors hover:text-primary ${
-                location.pathname === item.path
-                  ? "text-primary font-bold"
-                  : "text-muted-foreground"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
-          <Link to="/admin">
-            <Button variant="ghost" size="sm" className="text-muted-foreground text-xs">
-              Admin
-            </Button>
-          </Link>
-        </div>
-
-        {/* Mobile toggle */}
+        {/* Burger menu button - always visible */}
         <button
-          className="md:hidden text-foreground"
+          className="text-foreground p-2"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
+      {/* Dropdown menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-background border-b border-border"
+            className="bg-background border-b border-border"
           >
             <div className="container mx-auto px-6 py-4 flex flex-col gap-4">
               {navItems.map((item) => (

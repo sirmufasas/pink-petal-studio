@@ -14,7 +14,7 @@ const Footer = () => (
         <div className="flex gap-6 text-sm text-muted-foreground font-body">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
           <Link to="/services" className="hover:text-primary transition-colors">Services</Link>
-          <Link to="/portfolio" className="hover:text-primary transition-colors">Portfolio</Link>
+          <Link to="/portfolio" className="hover:text-primary transition-colors">My Work</Link>
           <Link to="/book" className="hover:text-primary transition-colors">Book Now</Link>
         </div>
         <p className="text-xs text-muted-foreground font-body">

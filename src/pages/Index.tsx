@@ -44,7 +44,7 @@ const Index = () => {
                   Book Appointment
                 </Button>
               </Link>
-              <Link to="/portfolio">
+              <Link to="/portfolio" aria-label="View my work">
                 <Button variant="hero-outline" size="lg" className="text-base px-10 py-6">
                   View My Work
                 </Button>
