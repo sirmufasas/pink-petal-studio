@@ -1,5 +1,6 @@
-import { Sparkles } from "lucide-react";
+import { Sparkles, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
+import { PHONE_NUMBER, PHONE_HREF } from "@/lib/booking-store";
 
 const Footer = () => (
   <footer className="bg-secondary/50 border-t border-border py-12">
@@ -8,7 +9,7 @@ const Footer = () => (
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
           <span className="font-display text-xl font-bold text-foreground">
-            Glow<span className="text-gradient-pink">Nails</span>
+            Kim's <span className="text-gradient-pink">Glam Lab</span>
           </span>
         </div>
         <div className="flex gap-6 text-sm text-muted-foreground font-body">
@@ -17,10 +18,14 @@ const Footer = () => (
           <Link to="/portfolio" className="hover:text-primary transition-colors">My Work</Link>
           <Link to="/book" className="hover:text-primary transition-colors">Book Now</Link>
         </div>
-        <p className="text-xs text-muted-foreground font-body">
-          © 2026 GlowNails. All rights reserved.
-        </p>
+        <a href={PHONE_HREF} className="flex items-center gap-2 text-sm text-primary font-body hover:text-primary/80">
+          <Phone className="h-4 w-4" />
+          {PHONE_NUMBER}
+        </a>
       </div>
+      <p className="text-center text-xs text-muted-foreground font-body mt-8">
+        © 2026 Kim's Glam Lab. All rights reserved.
+      </p>
     </div>
   </footer>
 );

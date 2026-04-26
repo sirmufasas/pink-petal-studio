@@ -4,24 +4,32 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Sparkles } from "lucide-react";
 
 const services = [
-  { category: "Acrylic", items: [
-    { name: "Acrylic Full Set", price: "$65", duration: "2 hrs" },
-    { name: "Acrylic Fill", price: "$45", duration: "1.5 hrs" },
-    { name: "Acrylic Removal", price: "$20", duration: "30 min" },
-    { name: "Acrylic Full Set + Design", price: "$85+", duration: "2.5 hrs" },
+  { category: "Acrylic Nails", items: [
+    { name: "Acrylic Full Set", price: "R450", duration: "2 hrs" },
+    { name: "Acrylic Fill", price: "R300", duration: "1.5 hrs" },
+    { name: "Acrylic Removal", price: "R150", duration: "30 min" },
+    { name: "Acrylic Full Set + Design", price: "R600+", duration: "2.5 hrs" },
   ]},
-  { category: "Gel", items: [
-    { name: "Gel Manicure", price: "$45", duration: "1 hr" },
-    { name: "Gel Pedicure", price: "$55", duration: "1.5 hrs" },
-    { name: "Gel-X Full Set", price: "$75", duration: "1.5 hrs" },
-    { name: "Gel Removal", price: "$15", duration: "20 min" },
+  { category: "Gel Nails", items: [
+    { name: "Gel Manicure", price: "R300", duration: "1 hr" },
+    { name: "Gel Pedicure", price: "R380", duration: "1.5 hrs" },
+    { name: "Gel-X Full Set", price: "R500", duration: "1.5 hrs" },
+    { name: "Gel Removal", price: "R100", duration: "20 min" },
   ]},
   { category: "Nail Art & Extras", items: [
-    { name: "Simple Nail Art (per nail)", price: "$5+", duration: "" },
-    { name: "Complex Design (per nail)", price: "$10+", duration: "" },
-    { name: "Chrome / Ombré", price: "$15+", duration: "30 min" },
-    { name: "Rhinestones & Charms", price: "$10+", duration: "20 min" },
-    { name: "Nail Repair (per nail)", price: "$10", duration: "15 min" },
+    { name: "Simple Nail Art (per nail)", price: "R30+", duration: "" },
+    { name: "Complex Design (per nail)", price: "R70+", duration: "" },
+    { name: "Chrome / Ombré", price: "R120+", duration: "30 min" },
+    { name: "Rhinestones & Charms", price: "R80+", duration: "20 min" },
+    { name: "Nail Repair (per nail)", price: "R70", duration: "15 min" },
+  ]},
+  { category: "Makeup", items: [
+    { name: "Soft Glam Makeup", price: "R550", duration: "1 hr" },
+    { name: "Full Glam Makeup", price: "R750", duration: "1.5 hrs" },
+    { name: "Bridal Makeup", price: "R1500", duration: "2 hrs" },
+    { name: "Matric Dance / Special Event", price: "R900", duration: "1.5 hrs" },
+    { name: "Makeup + Lashes", price: "R650", duration: "1.5 hrs" },
+    { name: "Lashes Only (Strip)", price: "R150", duration: "15 min" },
   ]},
 ];
 
@@ -39,7 +47,7 @@ const Services = () => (
         </div>
         <h1 className="font-display text-5xl font-bold text-foreground">Services & Prices</h1>
         <p className="text-muted-foreground font-body mt-4 max-w-lg mx-auto">
-          Quality nail care at fair prices. All services include nail prep and finishing.
+          Quality nails & makeup at fair prices. All services include prep & finishing touches.
         </p>
       </motion.div>
 

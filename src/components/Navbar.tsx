@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X, Sparkles, Phone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { PHONE_NUMBER, PHONE_HREF } from "@/lib/booking-store";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -19,21 +20,29 @@ const Navbar = () => {
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <Sparkles className="h-6 w-6 text-primary" />
-          <span className="font-display text-2xl font-bold text-foreground">
-            Glow<span className="text-gradient-pink">Nails</span>
+          <span className="font-display text-xl md:text-2xl font-bold text-foreground">
+            Kim's <span className="text-gradient-pink">Glam Lab</span>
           </span>
         </Link>
 
-        {/* Burger menu button - always visible */}
-        <button
-          className="text-foreground p-2"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="flex items-center gap-3">
+          <a
+            href={PHONE_HREF}
+            className="hidden sm:flex items-center gap-2 text-sm font-body text-primary hover:text-primary/80 transition-colors"
+          >
+            <Phone className="h-4 w-4" />
+            {PHONE_NUMBER}
+          </a>
+          <button
+            className="text-foreground p-2"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Menu"
+          >
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
-      {/* Dropdown menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -57,6 +66,13 @@ const Navbar = () => {
                   {item.label}
                 </Link>
               ))}
+              <a
+                href={PHONE_HREF}
+                className="sm:hidden flex items-center gap-2 text-sm font-body text-primary"
+              >
+                <Phone className="h-4 w-4" />
+                {PHONE_NUMBER}
+              </a>
               <Link to="/admin" onClick={() => setIsOpen(false)}>
                 <span className="font-body text-xs text-muted-foreground uppercase tracking-widest">
                   Admin
