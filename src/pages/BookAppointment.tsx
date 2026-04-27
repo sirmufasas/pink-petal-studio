@@ -107,28 +107,31 @@ const BookAppointment = () => {
           <p className="text-muted-foreground font-body mb-6">
             Your booking for <strong className="text-primary">{form.service}</strong> on{" "}
             <strong className="text-foreground">{dateStr}</strong> at{" "}
-            <strong className="text-foreground">{form.time}</strong> has been requested.
-            Kim will confirm via call or WhatsApp shortly!
+            <strong className="text-foreground">{form.time}</strong> is ready.
+            Tap the button below to send it to Kim on WhatsApp 💬
           </p>
           <a
-            href={WHATSAPP_HREF}
+            href={whatsappUrl || WHATSAPP_HREF}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="WhatsApp Kim"
-            className="inline-flex items-center justify-center gap-2 p-3 rounded-full bg-gradient-hero text-primary-foreground shadow-soft mb-8"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-hero text-primary-foreground shadow-soft hover:opacity-90 transition-opacity font-body font-bold mb-6"
           >
-            <Phone className="h-4 w-4" />
+            <Phone className="h-5 w-5" />
+            Send on WhatsApp
           </a>
-          <Button
-            variant="hero"
-            onClick={() => {
-              setSubmitted(false);
-              setDate(undefined);
-              setForm({ name: "", phone: "", email: "", service: "", time: "", notes: "" });
-            }}
-          >
-            Book Another
-          </Button>
+          <div>
+            <Button
+              variant="hero-outline"
+              onClick={() => {
+                setSubmitted(false);
+                setDate(undefined);
+                setWhatsappUrl("");
+                setForm({ name: "", phone: "", email: "", service: "", time: "", notes: "" });
+              }}
+            >
+              Book Another
+            </Button>
+          </div>
         </motion.div>
       </div>
     );
