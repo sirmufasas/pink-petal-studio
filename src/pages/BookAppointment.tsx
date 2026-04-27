@@ -62,8 +62,20 @@ const BookAppointment = () => {
       time: form.time,
       notes: form.notes,
     });
+
+    const msg =
+      `Hi Kim! I'd like to book an appointment 💖\n\n` +
+      `*Name:* ${form.name}\n` +
+      `*Phone:* ${form.phone}\n` +
+      (form.email ? `*Email:* ${form.email}\n` : "") +
+      `*Service:* ${form.service}\n` +
+      `*Date:* ${format(date, "EEE, dd MMM yyyy")}\n` +
+      `*Time:* ${form.time}\n` +
+      (form.notes ? `*Notes:* ${form.notes}\n` : "");
+    window.open(`${WHATSAPP_HREF}?text=${encodeURIComponent(msg)}`, "_blank");
+
     setSubmitted(true);
-    toast.success("Appointment request sent!");
+    toast.success("Opening WhatsApp to confirm…");
   };
 
   if (submitted) {
@@ -89,8 +101,14 @@ const BookAppointment = () => {
             <strong className="text-foreground">{form.time}</strong> has been requested.
             Kim will confirm via call or WhatsApp shortly!
           </p>
-          <a href={PHONE_HREF} className="flex items-center justify-center gap-2 text-primary font-body mb-8">
-            <Phone className="h-4 w-4" /> {PHONE_NUMBER}
+          <a
+            href={WHATSAPP_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="WhatsApp Kim"
+            className="inline-flex items-center justify-center gap-2 p-3 rounded-full bg-gradient-hero text-primary-foreground shadow-soft mb-8"
+          >
+            <Phone className="h-4 w-4" />
           </a>
           <Button
             variant="hero"
@@ -126,8 +144,14 @@ const BookAppointment = () => {
           <p className="text-muted-foreground font-body mt-4 max-w-lg mx-auto">
             Pick an available day, choose your time and service, and Kim will confirm your booking.
           </p>
-          <a href={PHONE_HREF} className="inline-flex items-center gap-2 text-primary font-body mt-3">
-            <Phone className="h-4 w-4" /> {PHONE_NUMBER}
+          <a
+            href={WHATSAPP_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="WhatsApp Kim"
+            className="inline-flex items-center justify-center p-3 rounded-full bg-gradient-hero text-primary-foreground shadow-soft mt-4"
+          >
+            <Phone className="h-4 w-4" />
           </a>
         </motion.div>
 
