@@ -136,7 +136,7 @@ const Admin = () => {
           </div>
           <h1 className="font-display text-4xl font-bold text-foreground">Manage Portfolio</h1>
           <p className="text-muted-foreground font-body mt-3">
-            Take photos or upload images to showcase your work.
+            Take photos or upload images of your nails & makeup work.
           </p>
         </motion.div>
 
