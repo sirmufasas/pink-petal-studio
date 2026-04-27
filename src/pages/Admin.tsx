@@ -287,14 +287,15 @@ const Admin = () => {
           </div>
         </div>
 
-        {/* Availability Calendar */}
+        {/* Booked Days Calendar */}
         <div className="max-w-4xl mx-auto mt-20">
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex items-center gap-2 mb-3">
             <CalendarDays className="h-5 w-5 text-primary" />
-            <h2 className="font-display text-2xl font-bold text-foreground">Availability</h2>
+            <h2 className="font-display text-2xl font-bold text-foreground">Mark Booked Days</h2>
           </div>
           <p className="text-muted-foreground font-body mb-4 text-sm">
-            Click a day to mark it unavailable (or reopen it). Unavailable days are hidden from clients.
+            Click a day to mark it as <strong className="text-destructive">booked / unavailable</strong>.
+            Click again to reopen it. Booked days are disabled on the customer's booking page.
           </p>
           <div className="bg-card rounded-2xl border border-border/50 shadow-soft p-4 inline-block">
             <CalendarUI
@@ -305,6 +306,11 @@ const Admin = () => {
               className={cn("p-3 pointer-events-auto")}
             />
           </div>
+          {blockedDays.length > 0 && (
+            <p className="text-xs text-muted-foreground font-body mt-3">
+              {blockedDays.length} day{blockedDays.length === 1 ? "" : "s"} marked as booked.
+            </p>
+          )}
         </div>
 
         {/* Bookings */}
