@@ -9,15 +9,21 @@ import sample3 from "@/assets/gallery-sample-3.jpg";
 import sample4 from "@/assets/gallery-sample-4.jpg";
 import sample5 from "@/assets/gallery-sample-5.jpg";
 import sample6 from "@/assets/gallery-sample-6.jpg";
+import makeup1 from "@/assets/gallery-makeup-1.jpg";
+import makeup2 from "@/assets/gallery-makeup-2.jpg";
+import makeup3 from "@/assets/gallery-makeup-3.jpg";
 import heroImg from "@/assets/hero-nails.jpg";
 
 const defaultItems = [
   { id: "d1", imageUrl: heroImg, description: "Rose gold chrome with crystal accents ✨", createdAt: "" },
-  { id: "d2", imageUrl: sample1, description: "Our premium pink polish collection 💅", createdAt: "" },
-  { id: "d3", imageUrl: sample3, description: "50 shades of pink — which is your fave? 💖", createdAt: "" },
+  { id: "m1", imageUrl: makeup3, description: "Bold pink full glam — eyes that pop 💖", createdAt: "" },
+  { id: "d2", imageUrl: sample1, description: "Premium pink polish collection 💅", createdAt: "" },
+  { id: "m2", imageUrl: makeup1, description: "My signature pink palette & tools 💄", createdAt: "" },
+  { id: "d3", imageUrl: sample3, description: "50 shades of pink — pick your fave 💖", createdAt: "" },
+  { id: "m3", imageUrl: makeup2, description: "Soft glam in progress ✨", createdAt: "" },
   { id: "d4", imageUrl: sample4, description: "Hot pink chrome finish 💕", createdAt: "" },
   { id: "d5", imageUrl: sample2, description: "Soft pink gel with shimmer ✨", createdAt: "" },
-  { id: "d6", imageUrl: sample5, description: "Pink glitter collection on display 💎", createdAt: "" },
+  { id: "d6", imageUrl: sample5, description: "Pink glitter collection 💎", createdAt: "" },
   { id: "d7", imageUrl: sample6, description: "Pink ombré perfection 🌸", createdAt: "" },
 ];
 

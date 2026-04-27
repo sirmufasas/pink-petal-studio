@@ -1,6 +1,6 @@
 import { Sparkles, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
-import { PHONE_NUMBER, PHONE_HREF } from "@/lib/booking-store";
+import { WHATSAPP_HREF } from "@/lib/booking-store";
 
 const Footer = () => (
   <footer className="bg-secondary/50 border-t border-border py-12">
@@ -18,9 +18,14 @@ const Footer = () => (
           <Link to="/portfolio" className="hover:text-primary transition-colors">My Work</Link>
           <Link to="/book" className="hover:text-primary transition-colors">Book Now</Link>
         </div>
-        <a href={PHONE_HREF} className="flex items-center gap-2 text-sm text-primary font-body hover:text-primary/80">
+        <a
+          href={WHATSAPP_HREF}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Contact on WhatsApp"
+          className="p-2.5 rounded-full bg-gradient-hero text-primary-foreground shadow-soft hover:opacity-90 transition-opacity"
+        >
           <Phone className="h-4 w-4" />
-          {PHONE_NUMBER}
         </a>
       </div>
       <p className="text-center text-xs text-muted-foreground font-body mt-8">
