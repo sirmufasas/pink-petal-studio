@@ -13,8 +13,7 @@ import {
   getBookedTimes,
   getBlockedDays,
   isDayFullyBooked,
-  PHONE_NUMBER,
-  PHONE_HREF,
+  WHATSAPP_HREF,
 } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
 
