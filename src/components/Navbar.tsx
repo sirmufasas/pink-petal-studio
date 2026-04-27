@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Sparkles, Phone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PHONE_NUMBER, PHONE_HREF } from "@/lib/booking-store";
+import { WHATSAPP_HREF } from "@/lib/booking-store";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -25,13 +25,15 @@ const Navbar = () => {
           </span>
         </Link>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <a
-            href={PHONE_HREF}
-            className="hidden sm:flex items-center gap-2 text-sm font-body text-primary hover:text-primary/80 transition-colors"
+            href={WHATSAPP_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Contact on WhatsApp"
+            className="p-2.5 rounded-full bg-gradient-hero text-primary-foreground shadow-soft hover:opacity-90 transition-opacity"
           >
             <Phone className="h-4 w-4" />
-            {PHONE_NUMBER}
           </a>
           <button
             className="text-foreground p-2"
@@ -66,13 +68,6 @@ const Navbar = () => {
                   {item.label}
                 </Link>
               ))}
-              <a
-                href={PHONE_HREF}
-                className="sm:hidden flex items-center gap-2 text-sm font-body text-primary"
-              >
-                <Phone className="h-4 w-4" />
-                {PHONE_NUMBER}
-              </a>
               <Link to="/admin" onClick={() => setIsOpen(false)}>
                 <span className="font-body text-xs text-muted-foreground uppercase tracking-widest">
                   Admin
