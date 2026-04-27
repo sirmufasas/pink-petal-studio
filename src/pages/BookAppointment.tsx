@@ -135,6 +135,7 @@ const BookAppointment = () => {
                 setSubmitted(false);
                 setDate(undefined);
                 setWhatsappUrl("");
+                setWhatsappMessage("");
                 setForm({ name: "", phone: "", email: "", service: "", time: "", notes: "" });
               }}
             >
