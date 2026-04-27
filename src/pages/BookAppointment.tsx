@@ -33,6 +33,7 @@ const serviceOptions = [
 
 const BookAppointment = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [whatsappUrl, setWhatsappUrl] = useState("");
   const [date, setDate] = useState<Date | undefined>();
   const [form, setForm] = useState({
     name: "",
@@ -73,10 +74,17 @@ const BookAppointment = () => {
       `*Date:* ${format(date, "EEE, dd MMM yyyy")}\n` +
       `*Time:* ${form.time}\n` +
       (form.notes ? `*Notes:* ${form.notes}\n` : "");
-    window.open(`${WHATSAPP_HREF}?text=${encodeURIComponent(msg)}`, "_blank");
+    const waUrl = `${WHATSAPP_HREF}?text=${encodeURIComponent(msg)}`;
+    setWhatsappUrl(waUrl);
+    // Break out of preview iframe; falls back to new tab in production
+    try {
+      window.top!.location.href = waUrl;
+    } catch {
+      window.open(waUrl, "_blank", "noopener,noreferrer");
+    }
 
     setSubmitted(true);
-    toast.success("Opening WhatsApp to confirm…");
+    toast.success("Opening WhatsApp…");
   };
 
   if (submitted) {
@@ -99,28 +107,31 @@ const BookAppointment = () => {
           <p className="text-muted-foreground font-body mb-6">
             Your booking for <strong className="text-primary">{form.service}</strong> on{" "}
             <strong className="text-foreground">{dateStr}</strong> at{" "}
-            <strong className="text-foreground">{form.time}</strong> has been requested.
-            Kim will confirm via call or WhatsApp shortly!
+            <strong className="text-foreground">{form.time}</strong> is ready.
+            Tap the button below to send it to Kim on WhatsApp 💬
           </p>
           <a
-            href={WHATSAPP_HREF}
+            href={whatsappUrl || WHATSAPP_HREF}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="WhatsApp Kim"
-            className="inline-flex items-center justify-center gap-2 p-3 rounded-full bg-gradient-hero text-primary-foreground shadow-soft mb-8"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-hero text-primary-foreground shadow-soft hover:opacity-90 transition-opacity font-body font-bold mb-6"
           >
-            <Phone className="h-4 w-4" />
+            <Phone className="h-5 w-5" />
+            Send on WhatsApp
           </a>
-          <Button
-            variant="hero"
-            onClick={() => {
-              setSubmitted(false);
-              setDate(undefined);
-              setForm({ name: "", phone: "", email: "", service: "", time: "", notes: "" });
-            }}
-          >
-            Book Another
-          </Button>
+          <div>
+            <Button
+              variant="hero-outline"
+              onClick={() => {
+                setSubmitted(false);
+                setDate(undefined);
+                setWhatsappUrl("");
+                setForm({ name: "", phone: "", email: "", service: "", time: "", notes: "" });
+              }}
+            >
+              Book Another
+            </Button>
+          </div>
         </motion.div>
       </div>
     );
