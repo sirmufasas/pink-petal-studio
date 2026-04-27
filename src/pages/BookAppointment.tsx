@@ -175,7 +175,7 @@ const BookAppointment = () => {
                   onSelect={(d) => { setDate(d); setForm({ ...form, time: "" }); }}
                   disabled={(d) => {
                     const ds = format(d, "yyyy-MM-dd");
-                    return d < today || blockedDays.includes(ds) || isDayFullyBooked(ds);
+                    return d < today || blockedDays.includes(ds);
                   }}
                   className={cn("p-3 pointer-events-auto")}
                 />
