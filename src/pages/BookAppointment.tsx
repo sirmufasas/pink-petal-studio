@@ -34,6 +34,7 @@ const serviceOptions = [
 const BookAppointment = () => {
   const [submitted, setSubmitted] = useState(false);
   const [whatsappUrl, setWhatsappUrl] = useState("");
+  const [whatsappMessage, setWhatsappMessage] = useState("");
   const [date, setDate] = useState<Date | undefined>();
   const [form, setForm] = useState({
     name: "",
@@ -76,10 +77,10 @@ const BookAppointment = () => {
       (form.notes ? `*Notes:* ${form.notes}\n` : "");
     const waUrl = `${WHATSAPP_HREF}&text=${encodeURIComponent(msg)}`;
     setWhatsappUrl(waUrl);
-    window.open(waUrl, "_blank", "noopener,noreferrer");
+    setWhatsappMessage(msg);
 
     setSubmitted(true);
-    toast.success("Opening WhatsApp…");
+    toast.success("Booking details are ready to send");
   };
 
   if (submitted) {
@@ -103,17 +104,30 @@ const BookAppointment = () => {
             Your booking for <strong className="text-primary">{form.service}</strong> on{" "}
             <strong className="text-foreground">{dateStr}</strong> at{" "}
             <strong className="text-foreground">{form.time}</strong> is ready.
-            Tap the button below to send it to Kim on WhatsApp 💬
           </p>
-          <a
-            href={whatsappUrl || WHATSAPP_HREF}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-hero text-primary-foreground shadow-soft hover:opacity-90 transition-opacity font-body font-bold mb-6"
-          >
-            <Phone className="h-5 w-5" />
-            Send on WhatsApp
-          </a>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+            <a
+              href={whatsappUrl || WHATSAPP_HREF}
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-hero text-primary-foreground shadow-soft hover:opacity-90 transition-opacity font-body font-bold"
+            >
+              <Phone className="h-5 w-5" />
+              Open WhatsApp App
+            </a>
+            <Button
+              type="button"
+              variant="hero-outline"
+              className="px-8 py-4 rounded-full"
+              onClick={async () => {
+                await navigator.clipboard.writeText(whatsappMessage);
+                toast.success("Booking message copied");
+              }}
+            >
+              Copy Message
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground font-body mb-6">
+            If WhatsApp is blocked in preview, copy the message and paste it into WhatsApp.
+          </p>
           <div>
             <Button
               variant="hero-outline"
