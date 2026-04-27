@@ -124,12 +124,12 @@ const Index = () => {
                 Passion for <span className="text-gradient-pink">Perfection</span>
               </h2>
               <p className="text-muted-foreground font-body leading-relaxed mb-6">
-                With years of experience in nail artistry, I bring creativity and precision 
-                to every appointment. Whether you want a subtle, classy look or bold, 
-                eye-catching designs — I've got you covered.
+                With years of experience in nails and makeup, I bring creativity and precision
+                to every appointment. Whether you want a subtle, classy look, bold nail art,
+                or a full glam beat — I've got you covered.
               </p>
               <p className="text-muted-foreground font-body leading-relaxed mb-8">
-                I use only premium products to ensure your nails look stunning and last long. 
+                I use only premium products so your nails and makeup look stunning and last all day.
                 Book your appointment today and let's create something beautiful together!
               </p>
               <Link to="/book">
