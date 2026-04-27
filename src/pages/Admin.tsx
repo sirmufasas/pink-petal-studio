@@ -1,15 +1,26 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Upload, Trash2, ImagePlus, Sparkles } from "lucide-react";
+import { Camera, Upload, Trash2, ImagePlus, Sparkles, CalendarDays, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { getGalleryItems, addGalleryItem, deleteGalleryItem } from "@/lib/gallery-store";
 import type { GalleryItem } from "@/lib/gallery-store";
+import {
+  getBookings,
+  deleteBooking,
+  getBlockedDays,
+  toggleBlockedDay,
+  type Booking,
+} from "@/lib/booking-store";
 
 const Admin = () => {
   const [items, setItems] = useState<GalleryItem[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [blockedDays, setBlockedDays] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
   const [mode, setMode] = useState<"upload" | "camera">("upload");
@@ -20,7 +31,28 @@ const Admin = () => {
 
   useEffect(() => {
     setItems(getGalleryItems());
+    setBookings(getBookings());
+    setBlockedDays(getBlockedDays());
   }, []);
+
+  const blockedDates = useMemo(
+    () => blockedDays.map((d) => new Date(d + "T00:00:00")),
+    [blockedDays]
+  );
+
+  const handleToggleBlocked = (d: Date | undefined) => {
+    if (!d) return;
+    const ds = format(d, "yyyy-MM-dd");
+    const next = toggleBlockedDay(ds);
+    setBlockedDays(next);
+    toast.success(next.includes(ds) ? "Day marked as unavailable" : "Day reopened");
+  };
+
+  const handleDeleteBooking = (id: string) => {
+    deleteBooking(id);
+    setBookings(getBookings());
+    toast.success("Booking removed");
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -253,6 +285,78 @@ const Admin = () => {
               ))}
             </AnimatePresence>
           </div>
+        </div>
+
+        {/* Availability Calendar */}
+        <div className="max-w-4xl mx-auto mt-20">
+          <div className="flex items-center gap-2 mb-6">
+            <CalendarDays className="h-5 w-5 text-primary" />
+            <h2 className="font-display text-2xl font-bold text-foreground">Availability</h2>
+          </div>
+          <p className="text-muted-foreground font-body mb-4 text-sm">
+            Click a day to mark it unavailable (or reopen it). Unavailable days are hidden from clients.
+          </p>
+          <div className="bg-card rounded-2xl border border-border/50 shadow-soft p-4 inline-block">
+            <CalendarUI
+              mode="single"
+              onSelect={handleToggleBlocked}
+              modifiers={{ blocked: blockedDates }}
+              modifiersClassNames={{ blocked: "bg-destructive/20 text-destructive line-through" }}
+              className={cn("p-3 pointer-events-auto")}
+            />
+          </div>
+        </div>
+
+        {/* Bookings */}
+        <div className="max-w-4xl mx-auto mt-16">
+          <h2 className="font-display text-2xl font-bold text-foreground mb-6">
+            Upcoming Bookings ({bookings.length})
+          </h2>
+          {bookings.length === 0 ? (
+            <p className="text-center text-muted-foreground font-body py-12">
+              No bookings yet.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {bookings
+                .slice()
+                .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))
+                .map((b) => (
+                  <div
+                    key={b.id}
+                    className="bg-card rounded-xl border border-border/50 p-4 flex items-start justify-between gap-4"
+                  >
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-baseline gap-2">
+                        <span className="font-display text-lg font-bold text-foreground">
+                          {b.name}
+                        </span>
+                        <span className="text-primary font-body text-sm">{b.service}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground font-body mt-1">
+                        {format(new Date(b.date + "T00:00:00"), "EEE, dd MMM yyyy")} @ {b.time}
+                      </p>
+                      <a
+                        href={`tel:${b.phone}`}
+                        className="inline-flex items-center gap-1 text-sm text-primary mt-1"
+                      >
+                        <Phone className="h-3 w-3" />
+                        {b.phone}
+                      </a>
+                      {b.notes && (
+                        <p className="text-xs text-muted-foreground italic mt-2">"{b.notes}"</p>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleDeleteBooking(b.id)}
+                      className="text-destructive hover:opacity-70 shrink-0"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

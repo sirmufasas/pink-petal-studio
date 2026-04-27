@@ -1,44 +1,68 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Sparkles, CheckCircle } from "lucide-react";
+import { Calendar as CalendarUI } from "@/components/ui/calendar";
+import { Calendar, Sparkles, CheckCircle, Phone } from "lucide-react";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import {
+  TIME_SLOTS,
+  addBooking,
+  getBookedTimes,
+  getBlockedDays,
+  isDayFullyBooked,
+  PHONE_NUMBER,
+  PHONE_HREF,
+} from "@/lib/booking-store";
+import { cn } from "@/lib/utils";
 
 const serviceOptions = [
-  "Acrylic Full Set",
-  "Acrylic Fill",
-  "Gel Manicure",
-  "Gel Pedicure",
-  "Gel-X Full Set",
-  "Nail Art & Design",
+  "Acrylic Full Set — R450",
+  "Acrylic Fill — R300",
+  "Gel Manicure — R300",
+  "Gel Pedicure — R380",
+  "Gel-X Full Set — R500",
+  "Nail Art & Design — R30+/nail",
+  "Soft Glam Makeup — R550",
+  "Full Glam Makeup — R750",
+  "Bridal Makeup — R1500",
+  "Matric / Event Makeup — R900",
   "Other",
-];
-
-const timeSlots = [
-  "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
-  "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM",
 ];
 
 const BookAppointment = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [date, setDate] = useState<Date | undefined>();
   const [form, setForm] = useState({
     name: "",
     phone: "",
     email: "",
     service: "",
-    date: "",
     time: "",
     notes: "",
   });
 
+  const dateStr = date ? format(date, "yyyy-MM-dd") : "";
+  const blockedDays = useMemo(() => getBlockedDays(), [submitted]);
+  const bookedTimes = useMemo(() => (dateStr ? getBookedTimes(dateStr) : []), [dateStr, submitted]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.phone || !form.service || !form.date || !form.time) {
+    if (!form.name || !form.phone || !form.service || !date || !form.time) {
       toast.error("Please fill in all required fields");
       return;
     }
+    addBooking({
+      name: form.name,
+      phone: form.phone,
+      email: form.email,
+      service: form.service,
+      date: dateStr,
+      time: form.time,
+      notes: form.notes,
+    });
     setSubmitted(true);
     toast.success("Appointment request sent!");
   };
@@ -60,19 +84,32 @@ const BookAppointment = () => {
           <p className="text-muted-foreground font-body mb-2">
             Thank you, <strong className="text-foreground">{form.name}</strong>!
           </p>
-          <p className="text-muted-foreground font-body mb-8">
-            Your appointment for <strong className="text-primary">{form.service}</strong> on{" "}
-            <strong className="text-foreground">{form.date}</strong> at{" "}
-            <strong className="text-foreground">{form.time}</strong> has been requested. 
-            I'll confirm via text/email shortly!
+          <p className="text-muted-foreground font-body mb-6">
+            Your booking for <strong className="text-primary">{form.service}</strong> on{" "}
+            <strong className="text-foreground">{dateStr}</strong> at{" "}
+            <strong className="text-foreground">{form.time}</strong> has been requested.
+            Kim will confirm via call or WhatsApp shortly!
           </p>
-          <Button variant="hero" onClick={() => { setSubmitted(false); setForm({ name: "", phone: "", email: "", service: "", date: "", time: "", notes: "" }); }}>
+          <a href={PHONE_HREF} className="flex items-center justify-center gap-2 text-primary font-body mb-8">
+            <Phone className="h-4 w-4" /> {PHONE_NUMBER}
+          </a>
+          <Button
+            variant="hero"
+            onClick={() => {
+              setSubmitted(false);
+              setDate(undefined);
+              setForm({ name: "", phone: "", email: "", service: "", time: "", notes: "" });
+            }}
+          >
             Book Another
           </Button>
         </motion.div>
       </div>
     );
   }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   return (
     <div className="min-h-screen pt-24 pb-16">
@@ -88,8 +125,11 @@ const BookAppointment = () => {
           </div>
           <h1 className="font-display text-5xl font-bold text-foreground">Book Now</h1>
           <p className="text-muted-foreground font-body mt-4 max-w-lg mx-auto">
-            Pick your service, choose a date & time, and I'll get back to you to confirm!
+            Pick an available day, choose your time and service, and Kim will confirm your booking.
           </p>
+          <a href={PHONE_HREF} className="inline-flex items-center gap-2 text-primary font-body mt-3">
+            <Phone className="h-4 w-4" /> {PHONE_NUMBER}
+          </a>
         </motion.div>
 
         <motion.form
@@ -97,40 +137,76 @@ const BookAppointment = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           onSubmit={handleSubmit}
-          className="max-w-2xl mx-auto bg-card rounded-2xl border border-border/50 shadow-soft p-8 space-y-6"
+          className="max-w-3xl mx-auto bg-card rounded-2xl border border-border/50 shadow-soft p-8 space-y-6"
         >
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-body font-bold text-foreground mb-2">Name *</label>
-              <Input
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="Your name"
-                className="bg-background"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-body font-bold text-foreground mb-2">Phone *</label>
-              <Input
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                placeholder="(555) 123-4567"
-                className="bg-background"
-              />
-            </div>
-          </div>
-
+          {/* Calendar */}
           <div>
-            <label className="block text-sm font-body font-bold text-foreground mb-2">Email</label>
-            <Input
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              placeholder="your@email.com"
-              className="bg-background"
-            />
+            <label className="block text-sm font-body font-bold text-foreground mb-3">
+              Pick a Date *
+            </label>
+            <div className="flex flex-col lg:flex-row gap-6 items-start">
+              <div className="bg-background rounded-xl border border-border/50 p-2 mx-auto">
+                <CalendarUI
+                  mode="single"
+                  selected={date}
+                  onSelect={(d) => { setDate(d); setForm({ ...form, time: "" }); }}
+                  disabled={(d) => {
+                    const ds = format(d, "yyyy-MM-dd");
+                    return d < today || blockedDays.includes(ds) || isDayFullyBooked(ds);
+                  }}
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </div>
+              <div className="flex-1 space-y-3 text-sm font-body">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-primary" />
+                  <span className="text-muted-foreground">Selected day</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-muted" />
+                  <span className="text-muted-foreground">Unavailable / fully booked</span>
+                </div>
+                {date && (
+                  <p className="text-foreground font-bold pt-2">
+                    {format(date, "EEEE, dd MMMM yyyy")}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
 
+          {/* Time slots */}
+          {date && (
+            <div>
+              <label className="block text-sm font-body font-bold text-foreground mb-2">
+                Available Times *
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {TIME_SLOTS.map((t) => {
+                  const taken = bookedTimes.includes(t);
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      disabled={taken}
+                      onClick={() => setForm({ ...form, time: t })}
+                      className={`px-4 py-2 rounded-full text-sm font-body border transition-all ${
+                        taken
+                          ? "bg-muted text-muted-foreground border-muted cursor-not-allowed line-through opacity-60"
+                          : form.time === t
+                          ? "bg-primary text-primary-foreground border-primary shadow-soft"
+                          : "bg-background text-muted-foreground border-border hover:border-primary hover:text-primary"
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Service */}
           <div>
             <label className="block text-sm font-body font-bold text-foreground mb-2">Service *</label>
             <div className="flex flex-wrap gap-2">
@@ -151,35 +227,37 @@ const BookAppointment = () => {
             </div>
           </div>
 
+          {/* Personal info */}
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-body font-bold text-foreground mb-2">Preferred Date *</label>
+              <label className="block text-sm font-body font-bold text-foreground mb-2">Name *</label>
               <Input
-                type="date"
-                value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Your name"
                 className="bg-background"
               />
             </div>
             <div>
-              <label className="block text-sm font-body font-bold text-foreground mb-2">Preferred Time *</label>
-              <div className="flex flex-wrap gap-2">
-                {timeSlots.map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setForm({ ...form, time: t })}
-                    className={`px-3 py-1.5 rounded-full text-xs font-body border transition-all ${
-                      form.time === t
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-background text-muted-foreground border-border hover:border-primary"
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
+              <label className="block text-sm font-body font-bold text-foreground mb-2">Phone *</label>
+              <Input
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                placeholder="071 234 5678"
+                className="bg-background"
+              />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-body font-bold text-foreground mb-2">Email</label>
+            <Input
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              placeholder="your@email.com"
+              className="bg-background"
+            />
           </div>
 
           <div>
@@ -187,7 +265,7 @@ const BookAppointment = () => {
             <Textarea
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              placeholder="Describe what you want, share inspo pics, etc."
+              placeholder="Describe what you want, share inspo, etc."
               rows={3}
               className="bg-background"
             />
