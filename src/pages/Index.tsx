@@ -25,17 +25,17 @@ const Index = () => {
             <div className="flex items-center gap-2 mb-6">
               <Sparkles className="h-5 w-5 text-primary" />
               <span className="text-sm font-body tracking-[0.3em] uppercase text-primary">
-                Premium Nail Art
+                Nails • Makeup • Glam
               </span>
             </div>
             <h1 className="font-display text-5xl md:text-7xl font-bold leading-tight mb-6 text-foreground">
-              Nails That
+              Nails & Makeup
               <br />
-              <span className="text-gradient-pink">Speak Beauty</span>
+              <span className="text-gradient-pink">That Speak Beauty</span>
             </h1>
             <p className="text-lg text-muted-foreground font-body mb-10 max-w-lg leading-relaxed">
-              Experience luxury nail artistry. From classic elegance to bold designs, 
-              every set is crafted with precision and passion.
+              Luxury nail artistry and pro makeup looks — from soft glam to full bridal beauty.
+              Every set, every face, crafted with precision and passion.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link to="/book">
