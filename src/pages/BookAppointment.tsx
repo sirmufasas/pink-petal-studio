@@ -74,14 +74,9 @@ const BookAppointment = () => {
       `*Date:* ${format(date, "EEE, dd MMM yyyy")}\n` +
       `*Time:* ${form.time}\n` +
       (form.notes ? `*Notes:* ${form.notes}\n` : "");
-    const waUrl = `${WHATSAPP_HREF}?text=${encodeURIComponent(msg)}`;
+    const waUrl = `${WHATSAPP_HREF}&text=${encodeURIComponent(msg)}`;
     setWhatsappUrl(waUrl);
-    // Break out of preview iframe; falls back to new tab in production
-    try {
-      window.top!.location.href = waUrl;
-    } catch {
-      window.open(waUrl, "_blank", "noopener,noreferrer");
-    }
+    window.open(waUrl, "_blank", "noopener,noreferrer");
 
     setSubmitted(true);
     toast.success("Opening WhatsApp…");

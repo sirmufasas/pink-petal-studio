@@ -64,4 +64,4 @@ export function isDayFullyBooked(date: string): boolean {
 
 export const PHONE_NUMBER = "+27 71 984 3649";
 export const PHONE_HREF = "tel:+27719843649";
-export const WHATSAPP_HREF = "https://wa.me/27719843649";
+export const WHATSAPP_HREF = "https://web.whatsapp.com/send?phone=27719843649";
