@@ -1,15 +1,26 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Upload, Trash2, ImagePlus, Sparkles } from "lucide-react";
+import { Camera, Upload, Trash2, ImagePlus, Sparkles, CalendarDays, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Calendar as CalendarUI } from "@/components/ui/calendar";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { getGalleryItems, addGalleryItem, deleteGalleryItem } from "@/lib/gallery-store";
 import type { GalleryItem } from "@/lib/gallery-store";
+import {
+  getBookings,
+  deleteBooking,
+  getBlockedDays,
+  toggleBlockedDay,
+  type Booking,
+} from "@/lib/booking-store";
 
 const Admin = () => {
   const [items, setItems] = useState<GalleryItem[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [blockedDays, setBlockedDays] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
   const [mode, setMode] = useState<"upload" | "camera">("upload");
@@ -20,7 +31,28 @@ const Admin = () => {
 
   useEffect(() => {
     setItems(getGalleryItems());
+    setBookings(getBookings());
+    setBlockedDays(getBlockedDays());
   }, []);
+
+  const blockedDates = useMemo(
+    () => blockedDays.map((d) => new Date(d + "T00:00:00")),
+    [blockedDays]
+  );
+
+  const handleToggleBlocked = (d: Date | undefined) => {
+    if (!d) return;
+    const ds = format(d, "yyyy-MM-dd");
+    const next = toggleBlockedDay(ds);
+    setBlockedDays(next);
+    toast.success(next.includes(ds) ? "Day marked as unavailable" : "Day reopened");
+  };
+
+  const handleDeleteBooking = (id: string) => {
+    deleteBooking(id);
+    setBookings(getBookings());
+    toast.success("Booking removed");
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
