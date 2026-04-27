@@ -50,7 +50,7 @@ const Portfolio = () => {
           </div>
           <h1 className="font-display text-5xl font-bold text-foreground">My Work</h1>
           <p className="text-muted-foreground font-body mt-4 max-w-lg mx-auto">
-            Browse through my latest nail art creations. Every set is unique!
+            Browse my latest nail sets and makeup looks. Every client, every face, every set is unique!
           </p>
         </motion.div>
 
