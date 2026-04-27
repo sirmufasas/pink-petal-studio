@@ -49,10 +49,11 @@ const BookAppointment = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.phone || !form.service || !date || !form.time) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
+    if (!form.name) return toast.error("Please enter your name");
+    if (!form.phone) return toast.error("Please enter your phone number");
+    if (!date) return toast.error("Please pick a date");
+    if (!form.time) return toast.error("Please select a time slot");
+    if (!form.service) return toast.error("Please select a service");
     addBooking({
       name: form.name,
       phone: form.phone,
