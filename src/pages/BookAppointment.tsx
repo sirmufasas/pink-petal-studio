@@ -18,16 +18,20 @@ import {
 import { cn } from "@/lib/utils";
 
 const serviceOptions = [
-  "Acrylic Full Set — R450",
-  "Acrylic Fill — R300",
-  "Gel Manicure — R300",
-  "Gel Pedicure — R380",
-  "Gel-X Full Set — R500",
-  "Nail Art & Design — R30+/nail",
-  "Soft Glam Makeup — R550",
-  "Full Glam Makeup — R750",
-  "Bridal Makeup — R1500",
-  "Matric / Event Makeup — R900",
+  "Gel Polish Manicure — R200",
+  "Gel Polish Pedicure — R200",
+  "Short Nails (Acrylic/Polygel) — R150",
+  "Medium Nails (Acrylic/Polygel) — R180",
+  "Long Nails (Acrylic/Polygel) — R200",
+  "Buff and Shine — R100",
+  "Soak-off — R100",
+  "Lashes — Classic — R150",
+  "Lashes — Cat-eye — R250",
+  "Lashes — Volume — R300",
+  "Soft Glam Makeup — R250",
+  "Full Glam Makeup — R350",
+  "Evening Makeup — R350",
+  "Bridal Makeup — R600",
   "Other",
 ];
 

@@ -1,36 +1,41 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Calendar, Sparkles } from "lucide-react";
+import { Calendar, Sparkles, ShieldCheck } from "lucide-react";
 
 const services = [
-  { category: "Acrylic Nails", items: [
-    { name: "Acrylic Full Set", price: "R450", duration: "2 hrs" },
-    { name: "Acrylic Fill", price: "R300", duration: "1.5 hrs" },
-    { name: "Acrylic Removal", price: "R150", duration: "30 min" },
-    { name: "Acrylic Full Set + Design", price: "R600+", duration: "2.5 hrs" },
+  { category: "Nails", items: [
+    { name: "Gel Polish Manicure", price: "R200", duration: "1 hr" },
+    { name: "Gel Polish Pedicure", price: "R200", duration: "1 hr" },
+    { name: "Short Nails (Acrylic / Polygel)", price: "R150", duration: "1.5 hrs" },
+    { name: "Medium Nails (Acrylic / Polygel)", price: "R180", duration: "1.5 hrs" },
+    { name: "Long Nails (Acrylic / Polygel)", price: "R200", duration: "2 hrs" },
+    { name: "Buff and Shine", price: "R100", duration: "30 min" },
+    { name: "Soak-off", price: "R100", duration: "30 min" },
   ]},
-  { category: "Gel Nails", items: [
-    { name: "Gel Manicure", price: "R300", duration: "1 hr" },
-    { name: "Gel Pedicure", price: "R380", duration: "1.5 hrs" },
-    { name: "Gel-X Full Set", price: "R500", duration: "1.5 hrs" },
-    { name: "Gel Removal", price: "R100", duration: "20 min" },
-  ]},
-  { category: "Nail Art & Extras", items: [
-    { name: "Simple Nail Art (per nail)", price: "R30+", duration: "" },
-    { name: "Complex Design (per nail)", price: "R70+", duration: "" },
-    { name: "Chrome / Ombré", price: "R120+", duration: "30 min" },
-    { name: "Rhinestones & Charms", price: "R80+", duration: "20 min" },
-    { name: "Nail Repair (per nail)", price: "R70", duration: "15 min" },
+  { category: "Eyelash Extensions", items: [
+    { name: "Temporary Extensions", price: "R50", duration: "20 min" },
+    { name: "Classic Set", price: "R150", duration: "1 hr" },
+    { name: "Cat-eye Set", price: "R250", duration: "1.5 hrs" },
+    { name: "Volume Set", price: "R300", duration: "2 hrs" },
   ]},
   { category: "Makeup", items: [
-    { name: "Soft Glam Makeup", price: "R550", duration: "1 hr" },
-    { name: "Full Glam Makeup", price: "R750", duration: "1.5 hrs" },
-    { name: "Bridal Makeup", price: "R1500", duration: "2 hrs" },
-    { name: "Matric Dance / Special Event", price: "R900", duration: "1.5 hrs" },
-    { name: "Makeup + Lashes", price: "R650", duration: "1.5 hrs" },
-    { name: "Lashes Only (Strip)", price: "R150", duration: "15 min" },
+    { name: "Soft Glam", price: "R250", duration: "1 hr" },
+    { name: "Full Glam", price: "R350", duration: "1.5 hrs" },
+    { name: "Evening Look", price: "R350", duration: "1.5 hrs" },
+    { name: "Special Effects", price: "R350", duration: "1.5 hrs" },
+    { name: "Bridal Look", price: "R600", duration: "2 hrs" },
   ]},
+];
+
+const policy = [
+  "Based in Winchester Hills, Johannesburg.",
+  "Only 1 extra person is allowed to tag along for your appointment as there is limited space.",
+  "A refundable deposit of 15% is required to secure your appointment.",
+  "You will not be charged for being late, HOWEVER please let me know at least 15 minutes before your set time.",
+  "I am home based and for my safety, the address will be sent to you after you have paid your deposit.",
+  "Please send POP to 0655524358.",
+  "An extra R100 will be added for call-out fee except for makeup clients in Johannesburg.",
 ];
 
 const Services = () => (
@@ -79,6 +84,36 @@ const Services = () => (
           </motion.div>
         ))}
       </div>
+
+      {/* Studio Policy */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="max-w-4xl mx-auto mt-20"
+      >
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <ShieldCheck className="h-5 w-5 text-primary" />
+          <span className="text-sm font-body tracking-[0.3em] uppercase text-primary">The Fine Print</span>
+        </div>
+        <h2 className="font-display text-3xl md:text-4xl font-bold text-center text-foreground mb-8">
+          Studio <span className="text-gradient-pink">Policy</span>
+        </h2>
+        <div className="bg-card rounded-2xl border border-border/50 shadow-soft p-8 space-y-4">
+          {policy.map((p, i) => (
+            <div key={i} className="flex gap-3">
+              <span className="font-display text-primary font-bold">✦</span>
+              <p className="text-foreground/90 font-body leading-relaxed">{p}</p>
+            </div>
+          ))}
+          <p className="text-center font-display text-lg font-bold text-primary pt-4 border-t border-border/50">
+            STRICTLY NO FAVOURS!!
+          </p>
+          <p className="text-center font-body text-sm text-muted-foreground">
+            Contact: <a href="tel:+27655524358" className="text-primary font-bold">065 552 4358</a>
+          </p>
+        </div>
+      </motion.div>
 
       <motion.div
         initial={{ opacity: 0 }}
