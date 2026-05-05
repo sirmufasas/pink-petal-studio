@@ -69,9 +69,9 @@ const Index = () => {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {[
-              { icon: Sparkles, title: "Acrylic Full Set", price: "R450+", desc: "Custom shaped acrylics with your choice of design" },
-              { icon: Heart, title: "Gel Manicure", price: "R300+", desc: "Long-lasting gel polish with cuticle care" },
-              { icon: Star, title: "Glam Makeup", price: "R550+", desc: "Soft glam, full glam, bridal & event makeup" },
+            { icon: Sparkles, title: "Acrylic / Polygel Nails", price: "from R150", desc: "Short, medium or long sets — sculpted to perfection" },
+              { icon: Heart, title: "Lash Extensions", price: "from R150", desc: "Classic, cat-eye and volume lash sets" },
+              { icon: Star, title: "Glam Makeup", price: "from R250", desc: "Soft glam, full glam, evening & bridal looks" },
             ].map((service, i) => (
               <motion.div
                 key={service.title}

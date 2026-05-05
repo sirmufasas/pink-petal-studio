@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Sparkles, Phone } from "lucide-react";
+import { Menu, X, Phone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { WHATSAPP_HREF } from "@/lib/booking-store";
+import logo from "@/assets/logo.jpg";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -18,8 +19,8 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-primary" />
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="Kim's Glam Lab logo" className="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover ring-2 ring-primary/40 shadow-soft" />
           <span className="font-display text-xl md:text-2xl font-bold text-foreground">
             Kim's <span className="text-gradient-pink">Glam Lab</span>
           </span>
