@@ -13,6 +13,13 @@ import toes from "@/assets/portfolio/toes.jpg";
 import face from "@/assets/portfolio/face.jpg";
 import gorjass from "@/assets/portfolio/gorjass.jpg";
 import faceee from "@/assets/portfolio/faceee.jpg";
+import pinkOmbre from "@/assets/portfolio/pink-ombre.jpg";
+import zebraStiletto from "@/assets/portfolio/zebra-stiletto.jpg";
+import redHeartToes from "@/assets/portfolio/red-heart-toes.jpg";
+import pinkMarble from "@/assets/portfolio/pink-marble.jpg";
+import babyPink from "@/assets/portfolio/baby-pink.jpg";
+import blackGold from "@/assets/portfolio/black-gold.jpg";
+import glamSmile from "@/assets/portfolio/glam-smile.jpg";
 
 const defaultItems = [
   { id: "d1", imageUrl: french, description: "Classic French tips — timeless elegance 🤍", createdAt: "" },
@@ -22,9 +29,16 @@ const defaultItems = [
   { id: "d5", imageUrl: red, description: "Classic red gel — bold & glossy ❤️", createdAt: "" },
   { id: "d6", imageUrl: nice, description: "Crisp white French set — clean perfection ✨", createdAt: "" },
   { id: "d7", imageUrl: toes, description: "Emerald French pedicure to match 💚", createdAt: "" },
+  { id: "d8", imageUrl: pinkOmbre, description: "Pink ombré gel — soft & dreamy 🌸", createdAt: "" },
+  { id: "d9", imageUrl: zebraStiletto, description: "Red & zebra stiletto stunners 🦓❤️", createdAt: "" },
+  { id: "d10", imageUrl: redHeartToes, description: "Red French pedi with hearts ❤️", createdAt: "" },
+  { id: "d11", imageUrl: pinkMarble, description: "Bubblegum pink with marble accent 💗", createdAt: "" },
+  { id: "d12", imageUrl: babyPink, description: "Baby pink natural gel — soft glam 🤍", createdAt: "" },
+  { id: "d13", imageUrl: blackGold, description: "Black stiletto with gold flake 🖤✨", createdAt: "" },
   { id: "m1", imageUrl: face, description: "Bridal glam with shimmer eyes 👰🏽", createdAt: "" },
   { id: "m2", imageUrl: gorjass, description: "Soft glam — radiant & glowing ✨", createdAt: "" },
   { id: "m3", imageUrl: faceee, description: "Sun-kissed everyday glam 💄", createdAt: "" },
+  { id: "m4", imageUrl: glamSmile, description: "Glitter cut-crease — all smiles ✨", createdAt: "" },
 ];
 
 const Portfolio = () => {
