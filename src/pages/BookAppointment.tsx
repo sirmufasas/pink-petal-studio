@@ -80,7 +80,8 @@ const BookAppointment = () => {
     setWhatsappMessage(msg);
 
     setSubmitted(true);
-    toast.success("Booking details are ready to send");
+    toast.success("Opening WhatsApp...");
+    window.location.href = waUrl;
   };
 
   if (submitted) {
