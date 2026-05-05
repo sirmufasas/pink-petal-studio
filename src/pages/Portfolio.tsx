@@ -72,10 +72,17 @@ const Portfolio = () => {
           {items.map((item, i) => (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: (i % 6) * 0.08 }}
+              initial={{ opacity: 0, scale: 0.6, rotate: -25, y: 40 }}
+              whileInView={{ opacity: 1, scale: 1, rotate: 0, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{
+                delay: (i % 6) * 0.1,
+                duration: 0.8,
+                type: "spring",
+                stiffness: 90,
+                damping: 14,
+              }}
+              whileHover={{ rotate: 1.5, scale: 1.02 }}
               className="mb-6 break-inside-avoid cursor-pointer group"
               onClick={() => setSelectedImg(item)}
             >
