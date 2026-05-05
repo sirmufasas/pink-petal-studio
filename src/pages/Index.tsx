@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Sparkles, Calendar, Star, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImg from "@/assets/hero-nails.jpg";
-import salonImg from "@/assets/gallery-sample-2.jpg";
+import face from "@/assets/portfolio/face.jpg";
 
 const Index = () => {
   return (
@@ -109,7 +109,7 @@ const Index = () => {
               viewport={{ once: true }}
             >
               <img
-                src={salonImg}
+                src={face}
                 alt="Our salon"
                 className="rounded-2xl shadow-glow w-full aspect-[4/3] object-cover"
               />
