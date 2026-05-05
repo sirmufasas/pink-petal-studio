@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, Upload, Trash2, ImagePlus, Sparkles, CalendarDays, Phone } from "lucide-react";
+import { Camera, Upload, Trash2, ImagePlus, Sparkles, CalendarDays, Phone, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
@@ -17,7 +17,97 @@ import {
   type Booking,
 } from "@/lib/booking-store";
 
-const Admin = () => {
+// ── Change this to your desired password ──────────────────────────────────────
+const ADMIN_PASSWORD = "admin123";
+const SESSION_KEY = "admin_unlocked";
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Password Gate ─────────────────────────────────────────────────────────────
+const PasswordGate = ({ onUnlock }: { onUnlock: () => void }) => {
+  const [value, setValue] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [shake, setShake] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (value === ADMIN_PASSWORD) {
+      sessionStorage.setItem(SESSION_KEY, "1");
+      onUnlock();
+    } else {
+      setShake(true);
+      setValue("");
+      setTimeout(() => setShake(false), 500);
+      toast.error("Incorrect password");
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-sm"
+      >
+        {/* Lock icon */}
+        <div className="flex justify-center mb-8">
+          <div className="bg-gradient-hero p-4 rounded-2xl shadow-glow">
+            <Lock className="h-8 w-8 text-white" />
+          </div>
+        </div>
+
+        <h1 className="font-display text-3xl font-bold text-foreground text-center mb-2">
+          Admin Access
+        </h1>
+        <p className="text-muted-foreground font-body text-center text-sm mb-8">
+          Enter your password to manage the portfolio.
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          <motion.div
+            animate={shake ? { x: [-8, 8, -6, 6, -3, 3, 0] } : {}}
+            transition={{ duration: 0.4 }}
+            className="bg-card rounded-2xl border border-border/50 shadow-soft p-6 space-y-4"
+          >
+            <div className="relative">
+              <input
+                ref={inputRef}
+                type={showPw ? "text" : "password"}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="Password"
+                className="w-full bg-background border border-border rounded-xl px-4 pr-12 py-3 text-foreground font-body text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPw((p) => !p)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                tabIndex={-1}
+              >
+                {showPw
+                  ? <EyeOff className="h-4 w-4" />
+                  : <Eye className="h-4 w-4" />
+                }
+              </button>
+            </div>
+
+            <Button variant="hero" className="w-full" type="submit">
+              Unlock
+            </Button>
+          </motion.div>
+        </form>
+      </motion.div>
+    </div>
+  );
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
+const AdminPanel = () => {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [blockedDays, setBlockedDays] = useState<string[]>([]);
@@ -58,9 +148,7 @@ const Admin = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
-      setPreview(reader.result as string);
-    };
+    reader.onload = () => setPreview(reader.result as string);
     reader.readAsDataURL(file);
   };
 
@@ -95,20 +183,13 @@ const Admin = () => {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext("2d")?.drawImage(video, 0, 0);
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
-    setPreview(dataUrl);
+    setPreview(canvas.toDataURL("image/jpeg", 0.85));
     stopCamera();
   };
 
   const handleSave = () => {
-    if (!preview) {
-      toast.error("Please add an image first");
-      return;
-    }
-    if (!description.trim()) {
-      toast.error("Please add a description");
-      return;
-    }
+    if (!preview) { toast.error("Please add an image first"); return; }
+    if (!description.trim()) { toast.error("Please add a description"); return; }
     addGalleryItem({ imageUrl: preview, description: description.trim() });
     setItems(getGalleryItems());
     setPreview(null);
@@ -124,7 +205,7 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen pt-24 pb-16">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -142,8 +223,7 @@ const Admin = () => {
 
         {/* Upload / Camera Section */}
         <div className="max-w-2xl mx-auto mb-16">
-          <div className="bg-card rounded-2xl border border-border/50 shadow-soft p-8">
-            {/* Mode tabs */}
+          <div className="bg-card rounded-2xl border border-border/50 shadow-soft p-4 sm:p-8">
             <div className="flex gap-2 mb-6">
               <Button
                 variant={mode === "upload" ? "default" : "outline"}
@@ -155,7 +235,7 @@ const Admin = () => {
               </Button>
               <Button
                 variant={mode === "camera" ? "default" : "outline"}
-                onClick={() => { setMode("camera"); }}
+                onClick={() => setMode("camera")}
                 className="flex-1"
               >
                 <Camera className="mr-2 h-4 w-4" />
@@ -166,10 +246,10 @@ const Admin = () => {
             {mode === "upload" && !preview && (
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-border rounded-xl p-12 text-center cursor-pointer hover:border-primary transition-colors"
+                className="border-2 border-dashed border-border rounded-xl p-8 sm:p-12 text-center cursor-pointer hover:border-primary transition-colors"
               >
-                <ImagePlus className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground font-body">
+                <ImagePlus className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-4 text-muted-foreground" />
+                <p className="text-muted-foreground font-body text-sm sm:text-base">
                   Click to upload or drag & drop
                 </p>
                 <input
@@ -185,12 +265,7 @@ const Admin = () => {
             {mode === "camera" && !preview && (
               <div className="space-y-4">
                 <div className="relative rounded-xl overflow-hidden bg-foreground/5 aspect-[4/3]">
-                  <video
-                    ref={videoRef}
-                    className="w-full h-full object-cover"
-                    playsInline
-                    muted
-                  />
+                  <video ref={videoRef} className="w-full h-full object-cover" playsInline muted />
                   {!streaming && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Button variant="hero" onClick={startCamera}>
@@ -221,7 +296,6 @@ const Admin = () => {
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
-
                 <div>
                   <label className="block text-sm font-body font-bold text-foreground mb-2">
                     Description *
@@ -229,12 +303,11 @@ const Admin = () => {
                   <Textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Describe this nail set... e.g. 'Pink ombré with crystal accents 💎'"
+                    placeholder="Describe this nail set… e.g. 'Pink ombré with crystal accents'"
                     rows={2}
                     className="bg-background"
                   />
                 </div>
-
                 <Button variant="hero" className="w-full" onClick={handleSave}>
                   <ImagePlus className="mr-2 h-5 w-5" />
                   Add to Portfolio
@@ -249,14 +322,12 @@ const Admin = () => {
           <h2 className="font-display text-2xl font-bold text-foreground mb-6">
             Portfolio Items ({items.length})
           </h2>
-
           {items.length === 0 && (
             <p className="text-center text-muted-foreground font-body py-12">
               No photos yet. Upload or take your first photo above!
             </p>
           )}
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <AnimatePresence>
               {items.map((item) => (
                 <motion.div
@@ -265,13 +336,9 @@ const Admin = () => {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="bg-card rounded-xl border border-border/50 overflow-hidden shadow-soft group"
+                  className="bg-card rounded-xl border border-border/50 overflow-hidden shadow-soft"
                 >
-                  <img
-                    src={item.imageUrl}
-                    alt={item.description}
-                    className="w-full aspect-square object-cover"
-                  />
+                  <img src={item.imageUrl} alt={item.description} className="w-full aspect-square object-cover" />
                   <div className="p-4 flex items-start justify-between gap-2">
                     <p className="text-sm text-foreground font-body flex-1">{item.description}</p>
                     <button
@@ -295,9 +362,9 @@ const Admin = () => {
           </div>
           <p className="text-muted-foreground font-body mb-4 text-sm">
             Click a day to mark it as <strong className="text-destructive">booked / unavailable</strong>.
-            Click again to reopen it. Booked days are disabled on the customer's booking page.
+            Click again to reopen it.
           </p>
-          <div className="bg-card rounded-2xl border border-border/50 shadow-soft p-4 inline-block">
+          <div className="bg-card rounded-2xl border border-border/50 shadow-soft p-4 inline-block w-full sm:w-auto">
             <CalendarUI
               mode="single"
               onSelect={handleToggleBlocked}
@@ -319,9 +386,7 @@ const Admin = () => {
             Upcoming Bookings ({bookings.length})
           </h2>
           {bookings.length === 0 ? (
-            <p className="text-center text-muted-foreground font-body py-12">
-              No bookings yet.
-            </p>
+            <p className="text-center text-muted-foreground font-body py-12">No bookings yet.</p>
           ) : (
             <div className="space-y-3">
               {bookings
@@ -332,25 +397,20 @@ const Admin = () => {
                     key={b.id}
                     className="bg-card rounded-xl border border-border/50 p-4 flex items-start justify-between gap-4"
                   >
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-baseline gap-2">
-                        <span className="font-display text-lg font-bold text-foreground">
-                          {b.name}
-                        </span>
+                        <span className="font-display text-lg font-bold text-foreground">{b.name}</span>
                         <span className="text-primary font-body text-sm">{b.service}</span>
                       </div>
                       <p className="text-sm text-muted-foreground font-body mt-1">
                         {format(new Date(b.date + "T00:00:00"), "EEE, dd MMM yyyy")} @ {b.time}
                       </p>
-                      <a
-                        href={`tel:${b.phone}`}
-                        className="inline-flex items-center gap-1 text-sm text-primary mt-1"
-                      >
+                      <a href={`tel:${b.phone}`} className="inline-flex items-center gap-1 text-sm text-primary mt-1">
                         <Phone className="h-3 w-3" />
                         {b.phone}
                       </a>
                       {b.notes && (
-                        <p className="text-xs text-muted-foreground italic mt-2">"{b.notes}"</p>
+                        <p className="text-xs text-muted-foreground italic mt-2 truncate">"{b.notes}"</p>
                       )}
                     </div>
                     <button
@@ -367,6 +427,19 @@ const Admin = () => {
       </div>
     </div>
   );
+};
+
+// ── Root export — shows gate until unlocked ───────────────────────────────────
+const Admin = () => {
+  const [unlocked, setUnlocked] = useState(
+    () => sessionStorage.getItem(SESSION_KEY) === "1"
+  );
+
+  if (!unlocked) {
+    return <PasswordGate onUnlock={() => setUnlocked(true)} />;
+  }
+
+  return <AdminPanel />;
 };
 
 export default Admin;

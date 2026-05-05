@@ -1,13 +1,19 @@
+/* App-level layout — responsive, no overlay */
+
 #root {
+  width: 100%;
   max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  margin-inline: auto;
+  /* Fluid padding: 1rem on mobile → 2rem on desktop */
+  padding: clamp(1rem, 4vw, 2rem);
+  /* Remove text-align: center — it forces inline children to centre-align
+     even when they shouldn't. Handle alignment per component instead. */
 }
 
+/* ── Logo ── */
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: clamp(3.5em, 8vw, 6em);
+  padding: clamp(0.75em, 2vw, 1.5em);
   will-change: filter;
   transition: filter 300ms;
 }
@@ -19,12 +25,8 @@
 }
 
 @keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -33,10 +35,139 @@
   }
 }
 
+/* ── Card ── */
 .card {
-  padding: 2em;
+  padding: clamp(1rem, 4vw, 2em);
+  width: 100%;
 }
 
+/* ── Utility ── */
 .read-the-docs {
   color: #888;
+  font-size: clamp(0.8rem, 2vw, 0.875rem);
+}
+
+/* ── Responsive page sections ── */
+
+/* Hero / full-bleed sections */
+.section-hero {
+  padding-block: clamp(3rem, 10vw, 7rem);
+  padding-inline: clamp(1rem, 5vw, 2rem);
+}
+
+/* Standard content section */
+.section {
+  padding-block: clamp(2rem, 6vw, 4rem);
+  padding-inline: clamp(1rem, 5vw, 2rem);
+}
+
+/* ── Responsive navigation ── */
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding-inline: clamp(1rem, 5vw, 2rem);
+  padding-block: 0.75rem;
+}
+
+/* ── Responsive grid ── */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: clamp(1rem, 3vw, 1.5rem);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: clamp(1rem, 3vw, 1.5rem);
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+/* ── Responsive flex row ── */
+.flex-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+  align-items: center;
+}
+
+.flex-row > * {
+  flex: 1 1 min(100%, 280px);
+}
+
+/* ── Images & media ── */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── Buttons — touch-friendly ── */
+button, [role="button"], a.btn {
+  min-height: 44px;
+  min-width: 44px;
+  padding-inline: clamp(0.75rem, 2vw, 1.25rem);
+  cursor: pointer;
+}
+
+/* ── Typography ── */
+h1 { font-size: clamp(2rem, 5vw + 0.5rem, 3.5rem); }
+h2 { font-size: clamp(1.5rem, 3.5vw + 0.25rem, 2.5rem); }
+h3 { font-size: clamp(1.25rem, 2.5vw, 1.875rem); }
+
+p, li {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  line-height: 1.7;
+}
+
+/* ── Breakpoint helpers (mirror Tailwind's sm/md/lg) ── */
+
+/* ≥ 640px — two-column layouts become viable */
+@media (min-width: 640px) {
+  #root {
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+}
+
+/* ≥ 768px — tablet */
+@media (min-width: 768px) {
+  .hide-mobile { display: block; }
+  .show-mobile { display: none; }
+}
+
+/* < 768px — mobile */
+@media (max-width: 767px) {
+  .hide-mobile { display: none; }
+  .show-mobile { display: block; }
+
+  /* Stack any flex rows on mobile */
+  .flex-row {
+    flex-direction: column;
+  }
+
+  /* Full-width cards on mobile */
+  .card {
+    border-radius: 0;
+    margin-inline: calc(-1 * clamp(1rem, 4vw, 2rem));
+    padding-inline: clamp(1rem, 4vw, 2rem);
+  }
+}
+
+/* ≥ 1024px — desktop */
+@media (min-width: 1024px) {
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }

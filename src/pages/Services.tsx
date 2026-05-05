@@ -34,7 +34,7 @@ const policy = [
   "A refundable deposit of 15% is required to secure your appointment.",
   "You will not be charged for being late, HOWEVER please let me know at least 15 minutes before your set time.",
   "I am home based and for my safety, the address will be sent to you after you have paid your deposit.",
-  "Please send POP to 0655524358.",
+  "Please send P.O.P to 0719843649.",
   "An extra R100 will be added for call-out fee except for makeup clients in Johannesburg.",
 ];
 
@@ -110,7 +110,7 @@ const Services = () => (
             STRICTLY NO FAVOURS!!
           </p>
           <p className="text-center font-body text-sm text-muted-foreground">
-            Contact: <a href="tel:+27655524358" className="text-primary font-bold">065 552 4358</a>
+            Contact: <a href="tel:+27719843649" className="text-primary font-bold">071 984 3649</a>
           </p>
         </div>
       </motion.div>
