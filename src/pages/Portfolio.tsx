@@ -46,8 +46,9 @@ const Portfolio = () => {
   const [selectedImg, setSelectedImg] = useState<GalleryItem | null>(null);
 
   useEffect(() => {
-    const stored = getGalleryItems();
-    setItems([...stored, ...defaultItems]);
+    getGalleryItems()
+      .then((stored) => setItems([...stored, ...(defaultItems as any)]))
+      .catch(() => setItems(defaultItems as any));
   }, []);
 
   return (

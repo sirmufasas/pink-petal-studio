@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,9 +12,9 @@ import {
   addBooking,
   getBookedTimes,
   getBlockedDays,
-  isDayFullyBooked,
   WHATSAPP_HREF,
 } from "@/lib/booking-store";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 const serviceOptions = [
