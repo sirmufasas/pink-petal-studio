@@ -50,25 +50,66 @@ const BookAppointment = () => {
   });
 
   const dateStr = date ? format(date, "yyyy-MM-dd") : "";
-  const blockedDays = useMemo(() => getBlockedDays(), [submitted]);
-  const bookedTimes = useMemo(() => (dateStr ? getBookedTimes(dateStr) : []), [dateStr, submitted]);
+  const [blockedDays, setBlockedDays] = useState<string[]>([]);
+  const [bookedTimes, setBookedTimes] = useState<string[]>([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Load blocked days + subscribe to changes
+  useEffect(() => {
+    getBlockedDays().then(setBlockedDays).catch(() => {});
+    const ch = supabase
+      .channel("blocked_days_book")
+      .on("postgres_changes", { event: "*", schema: "public", table: "blocked_days" }, () => {
+        getBlockedDays().then(setBlockedDays).catch(() => {});
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, []);
+
+  // Load booked times for the selected date + subscribe
+  useEffect(() => {
+    if (!dateStr) { setBookedTimes([]); return; }
+    let active = true;
+    getBookedTimes(dateStr).then((t) => { if (active) setBookedTimes(t); }).catch(() => {});
+    const ch = supabase
+      .channel(`bookings_${dateStr}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "bookings", filter: `date=eq.${dateStr}` },
+        () => { getBookedTimes(dateStr).then((t) => { if (active) setBookedTimes(t); }).catch(() => {}); }
+      )
+      .subscribe();
+    return () => { active = false; supabase.removeChannel(ch); };
+  }, [dateStr]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name) return toast.error("Please enter your name");
     if (!form.phone) return toast.error("Please enter your phone number");
     if (!date) return toast.error("Please pick a date");
     if (!form.time) return toast.error("Please select a time slot");
     if (!form.service) return toast.error("Please select a service");
-    addBooking({
-      name: form.name,
-      phone: form.phone,
-      email: form.email,
-      service: form.service,
-      date: dateStr,
-      time: form.time,
-      notes: form.notes,
-    });
+
+    // Double-check the slot is still free
+    const latest = await getBookedTimes(dateStr);
+    if (latest.includes(form.time)) {
+      setBookedTimes(latest);
+      setForm({ ...form, time: "" });
+      return toast.error("Oops — that time was just booked. Please pick another.");
+    }
+
+    try {
+      await addBooking({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        service: form.service,
+        date: dateStr,
+        time: form.time,
+        notes: form.notes,
+      });
+    } catch (err: any) {
+      return toast.error(err?.message || "Could not save your booking. Please try again.");
+    }
 
     const msg =
       `Hi Kim! I'd like to book an appointment 💖\n\n` +
@@ -87,6 +128,7 @@ const BookAppointment = () => {
     toast.success("Opening WhatsApp...");
     window.location.href = waUrl;
   };
+
 
   if (submitted) {
     return (
