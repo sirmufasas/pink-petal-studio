@@ -1,52 +1,80 @@
-// Local storage booking store
+import { supabase } from "@/integrations/supabase/client";
+
 export interface Booking {
   id: string;
   name: string;
   phone: string;
-  email?: string;
+  email?: string | null;
   service: string;
   date: string; // yyyy-mm-dd
   time: string;
-  notes?: string;
+  notes?: string | null;
   createdAt: string;
 }
 
-const STORAGE_KEY = "kgl-bookings";
-const BLOCKED_KEY = "kgl-blocked-days";
+function mapBooking(row: any): Booking {
+  return {
+    id: row.id,
+    name: row.name,
+    phone: row.phone,
+    email: row.email,
+    service: row.service,
+    date: row.date,
+    time: row.time,
+    notes: row.notes,
+    createdAt: row.created_at,
+  };
+}
 
-export function getBookings(): Booking[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  } catch {
-    return [];
+export async function getBookings(): Promise<Booking[]> {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .order("date", { ascending: true })
+    .order("time", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map(mapBooking);
+}
+
+export async function addBooking(b: Omit<Booking, "id" | "createdAt">): Promise<Booking> {
+  const { data, error } = await supabase
+    .from("bookings")
+    .insert({
+      name: b.name,
+      phone: b.phone,
+      email: b.email || null,
+      service: b.service,
+      date: b.date,
+      time: b.time,
+      notes: b.notes || null,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return mapBooking(data);
+}
+
+export async function deleteBooking(id: string) {
+  const { error } = await supabase.from("bookings").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function getBlockedDays(): Promise<string[]> {
+  const { data, error } = await supabase.from("blocked_days").select("date");
+  if (error) throw error;
+  return (data ?? []).map((r: any) => r.date);
+}
+
+export async function toggleBlockedDay(date: string): Promise<string[]> {
+  const current = await getBlockedDays();
+  if (current.includes(date)) {
+    const { error } = await supabase.from("blocked_days").delete().eq("date", date);
+    if (error) throw error;
+  } else {
+    const { error } = await supabase.from("blocked_days").insert({ date });
+    if (error) throw error;
   }
-}
-
-export function addBooking(b: Omit<Booking, "id" | "createdAt">): Booking {
-  const items = getBookings();
-  const item: Booking = { ...b, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
-  items.push(item);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  return item;
-}
-
-export function deleteBooking(id: string) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(getBookings().filter(b => b.id !== id)));
-}
-
-export function getBlockedDays(): string[] {
-  try {
-    return JSON.parse(localStorage.getItem(BLOCKED_KEY) || "[]");
-  } catch {
-    return [];
-  }
-}
-
-export function toggleBlockedDay(date: string) {
-  const days = getBlockedDays();
-  const next = days.includes(date) ? days.filter(d => d !== date) : [...days, date];
-  localStorage.setItem(BLOCKED_KEY, JSON.stringify(next));
-  return next;
+  return getBlockedDays();
 }
 
 export const TIME_SLOTS = [
@@ -54,12 +82,13 @@ export const TIME_SLOTS = [
   "13:00", "14:00", "15:00", "16:00", "17:00",
 ];
 
-export function getBookedTimes(date: string): string[] {
-  return getBookings().filter(b => b.date === date).map(b => b.time);
-}
-
-export function isDayFullyBooked(date: string): boolean {
-  return getBookedTimes(date).length >= TIME_SLOTS.length;
+export async function getBookedTimes(date: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("time")
+    .eq("date", date);
+  if (error) throw error;
+  return (data ?? []).map((r: any) => r.time);
 }
 
 export const PHONE_NUMBER = "+27 71 984 3649";
