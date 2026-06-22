@@ -209,21 +209,35 @@ const AdminPanel = () => {
     stopCamera();
   };
 
-  const handleSave = () => {
+  const [saving, setSaving] = useState(false);
+  const handleSave = async () => {
     if (!preview) { toast.error("Please add an image first"); return; }
     if (!description.trim()) { toast.error("Please add a description"); return; }
-    addGalleryItem({ imageUrl: preview, description: description.trim() });
-    setItems(getGalleryItems());
-    setPreview(null);
-    setDescription("");
-    toast.success("Photo added to portfolio! 🎉");
+    setSaving(true);
+    try {
+      await addGalleryItem({ imageUrl: preview, description: description.trim() });
+      setItems(await getGalleryItems());
+      setPreview(null);
+      setDescription("");
+      toast.success("Photo uploaded to the cloud! 🎉");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not upload photo");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    deleteGalleryItem(id);
-    setItems(getGalleryItems());
-    toast.success("Photo removed");
+  const handleDelete = async (id: string) => {
+    const item = items.find((i) => i.id === id);
+    try {
+      await deleteGalleryItem(id, item?.storagePath);
+      setItems(await getGalleryItems());
+      toast.success("Photo removed");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not delete photo");
+    }
   };
+
 
   return (
     <div className="min-h-screen pt-24 pb-16">
