@@ -14,7 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blocked_days: {
+        Row: {
+          created_at: string
+          date: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          created_at: string
+          date: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string
+          service: string
+          time: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone: string
+          service: string
+          time: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string
+          service?: string
+          time?: string
+        }
+        Relationships: []
+      }
+      gallery_items: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          image_url: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
