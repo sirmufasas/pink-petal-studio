@@ -119,10 +119,23 @@ const AdminPanel = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [streaming, setStreaming] = useState(false);
 
+  const refresh = async () => {
+    try {
+      const [g, b, d] = await Promise.all([
+        getGalleryItems(),
+        getBookings(),
+        getBlockedDays(),
+      ]);
+      setItems(g);
+      setBookings(b);
+      setBlockedDays(d);
+    } catch (e: any) {
+      toast.error(e?.message || "Could not load data");
+    }
+  };
+
   useEffect(() => {
-    setItems(getGalleryItems());
-    setBookings(getBookings());
-    setBlockedDays(getBlockedDays());
+    refresh();
   }, []);
 
   const blockedDates = useMemo(
@@ -130,19 +143,28 @@ const AdminPanel = () => {
     [blockedDays]
   );
 
-  const handleToggleBlocked = (d: Date | undefined) => {
+  const handleToggleBlocked = async (d: Date | undefined) => {
     if (!d) return;
     const ds = format(d, "yyyy-MM-dd");
-    const next = toggleBlockedDay(ds);
-    setBlockedDays(next);
-    toast.success(next.includes(ds) ? "Day marked as unavailable" : "Day reopened");
+    try {
+      const next = await toggleBlockedDay(ds);
+      setBlockedDays(next);
+      toast.success(next.includes(ds) ? "Day marked as unavailable" : "Day reopened");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not update day");
+    }
   };
 
-  const handleDeleteBooking = (id: string) => {
-    deleteBooking(id);
-    setBookings(getBookings());
-    toast.success("Booking removed");
+  const handleDeleteBooking = async (id: string) => {
+    try {
+      await deleteBooking(id);
+      setBookings(await getBookings());
+      toast.success("Booking removed");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not delete booking");
+    }
   };
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
