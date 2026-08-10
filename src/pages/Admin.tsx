@@ -314,7 +314,7 @@ const PhotosTab = ({
       await addGalleryImage(preview, description.trim());
       setPreview(null);
       setDescription("");
-      toast.success("Photo published — now showing on every page! 🎉");
+      toast.success("Photo published — anyone with your link can now see it! 🎉");
     } catch (e: any) {
       toast.error(e?.message || "Could not upload photo");
     } finally {
@@ -337,8 +337,9 @@ const PhotosTab = ({
       <div className="max-w-2xl mx-auto bg-card rounded-2xl border border-border/50 shadow-soft p-4 sm:p-8">
         <h2 className="font-display text-2xl font-bold text-foreground mb-2">Add a Photo</h2>
         <p className="text-sm text-muted-foreground font-body mb-6">
-          Uploaded photos appear <strong>globally</strong> — in the "Latest Work" strip on every
-          page and on the My Work page.
+          Photos are published to your website's online storage — <strong>anyone who opens your
+          link</strong> will see them on the <strong>My Work</strong> page (they no longer stay on
+          your device).
         </p>
         <div className="flex gap-2 mb-6">
           <Button
