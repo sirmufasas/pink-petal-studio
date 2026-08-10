@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import GlobalGalleryStrip from "@/components/GlobalGalleryStrip";
+import InstallPrompt from "@/components/InstallPrompt";
 import Index from "./pages/Index.tsx";
 import Services from "./pages/Services.tsx";
 import Portfolio from "./pages/Portfolio.tsx";
@@ -293,6 +293,7 @@ const App = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />
+            <InstallPrompt />
           </BrowserRouter>
         )}
       </TooltipProvider>
