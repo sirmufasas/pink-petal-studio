@@ -13,68 +13,241 @@
       "id": "nails",
       "category": "Nails",
       "items": [
-        { "name": "Gel Polish Manicure", "price": "", "duration": "1 hr" },
-        { "name": "Gel Polish Pedicure", "price": "", "duration": "1 hr" },
-        { "name": "Short Nails (Acrylic / Polygel)", "price": "", "duration": "1.5 hrs" },
-        { "name": "Medium Nails (Acrylic / Polygel)", "price": "", "duration": "1.5 hrs" },
-        { "name": "Long Nails (Acrylic / Polygel)", "price": "", "duration": "2 hrs" },
-        { "name": "Buff and Shine", "price": "", "duration": "30 min" },
-        { "name": "Soak-off", "price": "", "duration": "30 min" }
+        {
+          "name": "Gel Polish Manicure",
+          "price": "",
+          "duration": "1 hr"
+        },
+        {
+          "name": "Gel Polish Pedicure",
+          "price": "",
+          "duration": "1 hr"
+        },
+        {
+          "name": "Short Nails (Acrylic / Polygel)",
+          "price": "",
+          "duration": "1.5 hrs"
+        },
+        {
+          "name": "Medium Nails (Acrylic / Polygel)",
+          "price": "",
+          "duration": "1.5 hrs"
+        },
+        {
+          "name": "Long Nails (Acrylic / Polygel)",
+          "price": "",
+          "duration": "2 hrs"
+        },
+        {
+          "name": "Buff and Shine",
+          "price": "",
+          "duration": "30 min"
+        },
+        {
+          "name": "Soak-off",
+          "price": "",
+          "duration": "30 min"
+        }
       ]
     },
     {
       "id": "lashes",
       "category": "Eyelashes",
       "items": [
-        { "name": "Temporary/Strip", "price": "R50", "duration": "20 min" },
-        { "name": "Classic Cluster", "price": "R100", "duration": "45 min" },
-        { "name": "Cat-eye Cluster", "price": "R120", "duration": "1 hr" },
-        { "name": "Volume Cluster", "price": "R150", "duration": "1.5 hrs" }
+        {
+          "name": "Temporary/Strip",
+          "price": "R50",
+          "duration": "20 min"
+        },
+        {
+          "name": "Classic Cluster",
+          "price": "R100",
+          "duration": "45 min"
+        },
+        {
+          "name": "Cat-eye Cluster",
+          "price": "R120",
+          "duration": "1 hr"
+        },
+        {
+          "name": "Volume Cluster",
+          "price": "R150",
+          "duration": "1.5 hrs"
+        }
       ]
     },
     {
       "id": "brows",
       "category": "Eyebrows",
       "items": [
-        { "name": "Wax", "price": "R100", "duration": "30 min" },
-        { "name": "Tint", "price": "R100", "duration": "30 min" },
-        { "name": "Dermaplaning/Shaving", "price": "R50", "duration": "20 min" },
-        { "name": "Wax & Tint", "price": "R150", "duration": "1 hr" },
-        { "name": "Dermaplaning & Tint", "price": "R150", "duration": "1 hr" }
+        {
+          "name": "Wax",
+          "price": "R100",
+          "duration": "30 min"
+        },
+        {
+          "name": "Tint",
+          "price": "R100",
+          "duration": "30 min"
+        },
+        {
+          "name": "Dermaplaning/Shaving",
+          "price": "R50",
+          "duration": "20 min"
+        },
+        {
+          "name": "Wax & Tint",
+          "price": "R150",
+          "duration": "1 hr"
+        },
+        {
+          "name": "Dermaplaning & Tint",
+          "price": "R150",
+          "duration": "1 hr"
+        }
       ]
     },
     {
       "id": "makeup",
       "category": "Makeup",
       "items": [
-        { "name": "Soft Glam", "price": "R250", "duration": "1 hr" },
-        { "name": "Full Glam", "price": "R350", "duration": "1.5 hrs" },
-        { "name": "Evening Look", "price": "R350", "duration": "1.5 hrs" },
-        { "name": "Special Effects", "price": "R350", "duration": "1.5 hrs" },
-        { "name": "Bridal Look", "price": "R600", "duration": "2 hrs" }
+        {
+          "name": "Soft Glam",
+          "price": "R250",
+          "duration": "1 hr"
+        },
+        {
+          "name": "Full Glam",
+          "price": "R350",
+          "duration": "1.5 hrs"
+        },
+        {
+          "name": "Evening Look",
+          "price": "R350",
+          "duration": "1.5 hrs"
+        },
+        {
+          "name": "Special Effects",
+          "price": "R350",
+          "duration": "1.5 hrs"
+        },
+        {
+          "name": "Bridal Look",
+          "price": "R600",
+          "duration": "2 hrs"
+        }
       ]
     }
   ],
   "gallery": [
-    { "id": "d-lash1", "path": "bundled:lashes-cat-eye", "description": "Cat-eye cluster lashes — wispy & dramatic ✨", "createdAt": "" },
-    { "id": "d-brow1", "path": "bundled:brows-sculpted", "description": "Sculpted & tinted brows 🤎", "createdAt": "" },
-    { "id": "d1", "path": "bundled:french", "description": "Classic French tips — timeless elegance 🤍", "createdAt": "" },
-    { "id": "d2", "path": "bundled:emerald", "description": "Emerald green French tips for the gala 💚", "createdAt": "" },
-    { "id": "d3", "path": "bundled:pink-hearts", "description": "Soft pink gel with hand-painted hearts 💕", "createdAt": "" },
-    { "id": "d4", "path": "bundled:brown", "description": "Mocha French — warm & sophisticated ☕", "createdAt": "" },
-    { "id": "d5", "path": "bundled:red", "description": "Classic red gel — bold & glossy ❤️", "createdAt": "" },
-    { "id": "d6", "path": "bundled:nice", "description": "Crisp white French set — clean perfection ✨", "createdAt": "" },
-    { "id": "d7", "path": "bundled:toes", "description": "Emerald French pedicure to match 💚", "createdAt": "" },
-    { "id": "d8", "path": "bundled:pink-ombre", "description": "Pink ombré gel — soft & dreamy 🌸", "createdAt": "" },
-    { "id": "d9", "path": "bundled:zebra-stiletto", "description": "Red & zebra stiletto stunners 🦓❤️", "createdAt": "" },
-    { "id": "d10", "path": "bundled:red-heart-toes", "description": "Red French pedi with hearts ❤️", "createdAt": "" },
-    { "id": "d11", "path": "bundled:pink-marble", "description": "Bubblegum pink with marble accent 💗", "createdAt": "" },
-    { "id": "d12", "path": "bundled:baby-pink", "description": "Clean male - Buff and Shine ✨", "createdAt": "" },
-    { "id": "d13", "path": "bundled:black-gold", "description": "Black stiletto with gold flake 🖤✨", "createdAt": "" },
-    { "id": "d-m1", "path": "bundled:face", "description": "Bridal glam with shimmer eyes 👰", "createdAt": "" },
-    { "id": "d-m2", "path": "bundled:gorjass", "description": "Soft glam — radiant & glowing ✨", "createdAt": "" },
-    { "id": "d-m3", "path": "bundled:faceee", "description": "Sun-kissed everyday glam 💄", "createdAt": "" },
-    { "id": "d-m4", "path": "bundled:glam-smile", "description": "Glitter cut-crease — all smiles ✨", "createdAt": "" }
+    {
+      "id": "d-brow1",
+      "path": "bundled:brows-sculpted",
+      "description": "Sculpted & tinted brows 🤎",
+      "createdAt": ""
+    },
+    {
+      "id": "d1",
+      "path": "bundled:french",
+      "description": "Classic French tips — timeless elegance 🤍",
+      "createdAt": ""
+    },
+    {
+      "id": "d2",
+      "path": "bundled:emerald",
+      "description": "Emerald green French tips for the gala 💚",
+      "createdAt": ""
+    },
+    {
+      "id": "d3",
+      "path": "bundled:pink-hearts",
+      "description": "Soft pink gel with hand-painted hearts 💕",
+      "createdAt": ""
+    },
+    {
+      "id": "d4",
+      "path": "bundled:brown",
+      "description": "Mocha French — warm & sophisticated ☕",
+      "createdAt": ""
+    },
+    {
+      "id": "d5",
+      "path": "bundled:red",
+      "description": "Classic red gel — bold & glossy ❤️",
+      "createdAt": ""
+    },
+    {
+      "id": "d6",
+      "path": "bundled:nice",
+      "description": "Crisp white French set — clean perfection ✨",
+      "createdAt": ""
+    },
+    {
+      "id": "d7",
+      "path": "bundled:toes",
+      "description": "Emerald French pedicure to match 💚",
+      "createdAt": ""
+    },
+    {
+      "id": "d8",
+      "path": "bundled:pink-ombre",
+      "description": "Pink ombré gel — soft & dreamy 🌸",
+      "createdAt": ""
+    },
+    {
+      "id": "d9",
+      "path": "bundled:zebra-stiletto",
+      "description": "Red & zebra stiletto stunners 🦓❤️",
+      "createdAt": ""
+    },
+    {
+      "id": "d10",
+      "path": "bundled:red-heart-toes",
+      "description": "Red French pedi with hearts ❤️",
+      "createdAt": ""
+    },
+    {
+      "id": "d11",
+      "path": "bundled:pink-marble",
+      "description": "Bubblegum pink with marble accent 💗",
+      "createdAt": ""
+    },
+    {
+      "id": "d12",
+      "path": "bundled:baby-pink",
+      "description": "Clean male - Buff and Shine ✨",
+      "createdAt": ""
+    },
+    {
+      "id": "d13",
+      "path": "bundled:black-gold",
+      "description": "Black stiletto with gold flake 🖤✨",
+      "createdAt": ""
+    },
+    {
+      "id": "d-m1",
+      "path": "bundled:face",
+      "description": "Bridal glam with shimmer eyes 👰",
+      "createdAt": ""
+    },
+    {
+      "id": "d-m2",
+      "path": "bundled:gorjass",
+      "description": "Soft glam — radiant & glowing ✨",
+      "createdAt": ""
+    },
+    {
+      "id": "d-m3",
+      "path": "bundled:faceee",
+      "description": "Sun-kissed everyday glam 💄",
+      "createdAt": ""
+    },
+    {
+      "id": "d-m4",
+      "path": "bundled:glam-smile",
+      "description": "Glitter cut-crease — all smiles ✨",
+      "createdAt": ""
+    }
   ],
   "blockedDays": []
 }
