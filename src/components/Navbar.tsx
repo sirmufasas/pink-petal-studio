@@ -10,7 +10,6 @@ const navItems = [
   { label: "Services", path: "/services" },
   { label: "My Work", path: "/portfolio" },
   { label: "Reviews", path: "/reviews" },
-  { label: "Nail Studio", path: "/studio" },
   { label: "Book Now", path: "/book" },
 ];
 

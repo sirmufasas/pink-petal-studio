@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { useSiteData, TIME_SLOTS, waLink, parseHours } from "@/lib/content";
 import { buildICS, downloadICS, googleCalUrl } from "@/lib/calendar";
+import { addBooking, getBookedTimes } from "@/lib/booking-store";
 import { cn } from "@/lib/utils";
 
 const BookAppointment = () => {
@@ -25,6 +26,20 @@ const BookAppointment = () => {
   const [form, setForm] = useState({ name: "", phone: "", email: "", service: "", time: "", notes: "" });
 
   const dateStr = date ? format(date, "yyyy-MM-dd") : "";
+  const [bookedTimes, setBookedTimes] = useState<string[]>([]);
+
+  // live availability from the shared bookings store
+  useEffect(() => {
+    if (!dateStr) {
+      setBookedTimes([]);
+      return;
+    }
+    let active = true;
+    getBookedTimes(dateStr).then((t) => active && setBookedTimes(t)).catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [dateStr]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +48,29 @@ const BookAppointment = () => {
     if (!date) return toast.error("Please pick a date");
     if (!form.time) return toast.error("Please select a time slot");
     if (!form.service) return toast.error("Please select a service");
+
+    // double-check the slot is still free
+    const latest = await getBookedTimes(dateStr).catch(() => [] as string[]);
+    if (latest.includes(form.time)) {
+      setBookedTimes(latest);
+      setForm({ ...form, time: "" });
+      return toast.error("Oops — that time was just booked. Please pick another.");
+    }
+
+    // save to the shared bookings list (Admin → Bookings screen)
+    try {
+      await addBooking({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        service: form.service,
+        date: dateStr,
+        time: form.time,
+        notes: form.notes,
+      });
+    } catch {
+      toast.error("Booking list unavailable — your booking still goes to Kim on WhatsApp.");
+    }
 
     // find duration for the chosen service (e.g. "Eyelashes — Classic Cluster — R100")
     const [catName, itemName] = form.service.split(" — ");
@@ -232,20 +270,26 @@ const BookAppointment = () => {
             <div>
               <label className="block text-sm font-body font-bold text-foreground mb-2">Available Times *</label>
               <div className="flex flex-wrap gap-2">
-                {TIME_SLOTS.map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setForm({ ...form, time: t })}
-                    className={`px-4 py-2 rounded-full text-sm font-body border transition-all ${
-                      form.time === t
-                        ? "bg-primary text-primary-foreground border-primary shadow-soft"
-                        : "bg-background text-muted-foreground border-border hover:border-primary hover:text-primary"
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
+                {TIME_SLOTS.map((t) => {
+                  const taken = bookedTimes.includes(t);
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      disabled={taken}
+                      onClick={() => setForm({ ...form, time: t })}
+                      className={`px-4 py-2 rounded-full text-sm font-body border transition-all ${
+                        taken
+                          ? "bg-muted text-muted-foreground border-muted cursor-not-allowed line-through opacity-60"
+                          : form.time === t
+                          ? "bg-primary text-primary-foreground border-primary shadow-soft"
+                          : "bg-background text-muted-foreground border-border hover:border-primary hover:text-primary"
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}

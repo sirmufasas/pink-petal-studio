@@ -116,7 +116,8 @@ export const DEFAULT_DATA: SiteData = {
     whatsappNumber: "27719843649",
     heroTitle: "Nails & Makeup",
     heroTagline: "That Speak Beauty",
-    googleReviewUrl: "https://www.google.com/search?q=kims+glam+lab",
+    googleReviewUrl:
+      "https://www.google.com/maps/search/?api=1&query=Kim%27s+Glam+Lab%2C+Botterblom+St%2C+Winchester+Hills%2C+Johannesburg",
   },
   reviews: [],
   services: [
@@ -312,28 +313,52 @@ function toBase64(str: string): string {
 }
 
 export async function commitTextFile(path: string, content: string, message: string): Promise<void> {
-  const sha = await getFileSha(path);
-  await gh(`repos/${REPO}/contents/${path}`, {
-    method: "PUT",
-    body: JSON.stringify({ message, content: toBase64(content), branch: BRANCH, ...(sha ? { sha } : {}) }),
-  });
+  await putFileWithRetry(path, toBase64(content), message);
 }
 
 export async function commitBinaryFile(path: string, base64: string, message: string): Promise<void> {
-  const sha = await getFileSha(path);
-  await gh(`repos/${REPO}/contents/${path}`, {
-    method: "PUT",
-    body: JSON.stringify({ message, content: base64, branch: BRANCH, ...(sha ? { sha } : {}) }),
-  });
+  await putFileWithRetry(path, base64, message);
+}
+
+// GitHub answers 409 when the file changed between reading its sha and writing.
+// Happens when two saves land back-to-back — just re-read the sha and retry.
+async function putFileWithRetry(path: string, base64: string, message: string): Promise<void> {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const sha = await getFileSha(path);
+    try {
+      await gh(`repos/${REPO}/contents/${path}`, {
+        method: "PUT",
+        body: JSON.stringify({ message, content: base64, branch: BRANCH, ...(sha ? { sha } : {}) }),
+      });
+      return;
+    } catch (e: any) {
+      if (String(e?.message || "").includes("409") && attempt < 2) {
+        await new Promise((r) => setTimeout(r, 700));
+        continue;
+      }
+      throw e;
+    }
+  }
 }
 
 export async function deleteRepoFile(path: string, message: string): Promise<void> {
-  const sha = await getFileSha(path);
-  if (!sha) return;
-  await gh(`repos/${REPO}/contents/${path}`, {
-    method: "DELETE",
-    body: JSON.stringify({ message, sha, branch: BRANCH }),
-  });
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const sha = await getFileSha(path);
+    if (!sha) return;
+    try {
+      await gh(`repos/${REPO}/contents/${path}`, {
+        method: "DELETE",
+        body: JSON.stringify({ message, sha, branch: BRANCH }),
+      });
+      return;
+    } catch (e: any) {
+      if (String(e?.message || "").includes("409") && attempt < 2) {
+        await new Promise((r) => setTimeout(r, 700));
+        continue;
+      }
+      throw e;
+    }
+  }
 }
 
 export async function saveSiteData(data: SiteData, message: string): Promise<void> {

@@ -2,7 +2,8 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Camera, Upload, Trash2, ImagePlus, Sparkles, CalendarDays, Lock, Eye, EyeOff,
-  Plug, Plus, Save, Settings2, ListOrdered, Images, Star,
+  Plug, Plus, Save, Settings2, ListOrdered, Images, Star, ClipboardList, Phone,
+  RefreshCw, ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,9 @@ import {
   type SiteData, type ServiceCategory, type ServiceItem, type Review,
 } from "@/lib/content";
 import { Stars } from "./Reviews";
+import { getBookings, deleteBooking, type Booking } from "@/lib/booking-store";
+import { googleCalUrl } from "@/lib/calendar";
+import { parseHours } from "@/lib/content";
 
 // ── Change this to your desired password ──────────────────────────────────────
 const ADMIN_PASSWORD = "admin123";
@@ -99,10 +103,11 @@ const PasswordGate = ({ onUnlock }: { onUnlock: () => void }) => {
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
-type Tab = "photos" | "services" | "reviews" | "days" | "settings" | "connection";
+type Tab = "photos" | "bookings" | "services" | "reviews" | "days" | "settings" | "connection";
 
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "photos", label: "Photos", icon: Images },
+  { id: "bookings", label: "Bookings", icon: ClipboardList },
   { id: "services", label: "Services & Prices", icon: ListOrdered },
   { id: "reviews", label: "Reviews", icon: Star },
   { id: "days", label: "Booked Days", icon: CalendarDays },
@@ -168,6 +173,7 @@ const AdminPanel = () => {
 
         <div className="max-w-5xl mx-auto">
           {tab === "connection" && <ConnectionTab />}
+          {tab === "bookings" && <BookingsTab />}
           {tab === "photos" && <PhotosTab data={data} requireToken={requireToken} setSaving={setSaving} saving={saving} />}
           {tab === "services" && <ServicesTab data={data} requireToken={requireToken} />}
           {tab === "reviews" && <ReviewsTab data={data} requireToken={requireToken} />}
@@ -179,7 +185,96 @@ const AdminPanel = () => {
   );
 };
 
-// ── Connection ────────────────────────────────────────────────────────────────
+// ── Bookings ──────────────────────────────────────────────────────────────────
+const BookingsTab = () => {
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    setLoading(true);
+    setBookings(await getBookings());
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const remove = async (id: string) => {
+    try {
+      await deleteBooking(id);
+      await load();
+      toast.success("Booking removed");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not delete booking");
+    }
+  };
+
+  const sorted = bookings.slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+
+  return (
+    <div className="max-w-3xl mx-auto space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="font-display text-2xl font-bold text-foreground">
+          All Bookings ({bookings.length})
+        </h2>
+        <Button variant="outline" size="sm" onClick={load}>
+          <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} /> Refresh
+        </Button>
+      </div>
+      <p className="text-sm text-muted-foreground font-body">
+        Everyone who books on the site appears here with what they want and when — bookings also
+        land on your WhatsApp with a calendar link.
+      </p>
+      {sorted.length === 0 ? (
+        <p className="text-center text-muted-foreground font-body py-12">No bookings yet.</p>
+      ) : (
+        sorted.map((b) => {
+          const hours = parseHours(b.service.split("—")[1]);
+          const [, itemName] = b.service.split(" — ");
+          return (
+            <div key={b.id} className="bg-card rounded-2xl border border-border/50 shadow-soft p-5 flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-baseline gap-2">
+                  <span className="font-display text-lg font-bold text-foreground">{b.name}</span>
+                  <span className="text-primary font-body text-sm">{b.service}</span>
+                </div>
+                <p className="text-sm text-muted-foreground font-body mt-1">
+                  {format(new Date(b.date + "T00:00:00"), "EEE, dd MMM yyyy")} @ {b.time}
+                </p>
+                <a href={`tel:${b.phone}`} className="inline-flex items-center gap-1 text-sm text-primary mt-1">
+                  <Phone className="h-3 w-3" /> {b.phone}
+                </a>
+                {b.notes && <p className="text-xs text-muted-foreground italic mt-2">"{b.notes}"</p>}
+              </div>
+              <div className="flex flex-col gap-2 shrink-0">
+                <a
+                  href={googleCalUrl({
+                    title: `Kim's Glam Lab — ${itemName || b.service}`,
+                    description: `Booking: ${b.name} (${b.phone})\nService: ${b.service}${b.notes ? `\nNotes: ${b.notes}` : ""}`,
+                    date: b.date,
+                    time: b.time,
+                    hours,
+                  })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                >
+                  <ExternalLink className="h-3 w-3" /> Add to my calendar
+                </a>
+                <button onClick={() => remove(b.id)} className="inline-flex items-center gap-1 text-xs text-destructive hover:opacity-70">
+                  <Trash2 className="h-3 w-3" /> Remove
+                </button>
+              </div>
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
+};
+
+// ── Connection ─────────────────────────────────────────────────────────────────
 const ConnectionTab = () => {
   const [token, setTokenValue] = useState(getToken());
   const [login, setLogin] = useState<string | null>(null);
