@@ -615,22 +615,22 @@ const ServicesTab = ({ data, requireToken }: { data: SiteData | null; requireTok
           </div>
           <div className="space-y-3">
             {cat.items.map((item, ii) => (
-              <div key={ii} className="grid grid-cols-[1fr_90px_90px_36px] gap-2 items-center">
+              <div key={ii} className="grid grid-cols-[1fr_1fr_36px] sm:grid-cols-[1fr_90px_90px_36px] gap-2 items-center">
                 <Input
                   value={item.name}
                   placeholder="Service name"
                   onChange={(e) => updateItem(ci, ii, { name: e.target.value })}
-                  className="bg-background"
+                  className="bg-background col-span-3 sm:col-span-1"
                 />
                 <Input
                   value={item.price}
-                  placeholder="R000"
+                  placeholder="Price (blank = hide)"
                   onChange={(e) => updateItem(ci, ii, { price: e.target.value })}
                   className="bg-background"
                 />
                 <Input
                   value={item.duration || ""}
-                  placeholder="1 hr"
+                  placeholder="Time e.g. 1 hr"
                   onChange={(e) => updateItem(ci, ii, { duration: e.target.value })}
                   className="bg-background"
                 />
@@ -722,7 +722,7 @@ const ReviewsTab = ({ data, requireToken }: { data: SiteData | null; requireToke
       </div>
       {draft.map((r, i) => (
         <div key={r.id} className="max-w-2xl mx-auto bg-card rounded-2xl border border-border/50 shadow-soft p-6 space-y-3">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <Input value={r.name} placeholder="Client name" onChange={(e) => update(i, { name: e.target.value })} className="bg-background max-w-xs" />
             <div className="flex items-center gap-3">
               <select
