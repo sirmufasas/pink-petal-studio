@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Download, X, Share, PlusSquare, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const icon = `${import.meta.env.BASE_URL}icons/icon-512.png`;
-
-const DISMISS_KEY = "kgl-install-dismissed";
+const REMIND_MS = 5 * 60 * 1000; // remind again after 5 minutes
+const FIRST_DELAY = 1800;
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
+// "Is the app installed on this phone?" — installed apps run in standalone mode
 const isStandalone = () =>
   window.matchMedia("(display-mode: standalone)").matches ||
   (navigator as any).standalone === true;
@@ -20,19 +21,33 @@ const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
 
 const InstallPrompt = () => {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
+  const deferredRef = useRef<BeforeInstallPromptEvent | null>(null);
   const [showAndroid, setShowAndroid] = useState(false);
   const [showIOS, setShowIOS] = useState(false);
   const [iosHelp, setIosHelp] = useState(false);
   const [installed, setInstalled] = useState(false);
 
   useEffect(() => {
+    // installed on this phone? then never bother them
     if (isStandalone()) return;
-    const dismissed = localStorage.getItem(DISMISS_KEY) === "1";
+
+    const mq = window.matchMedia("(display-mode: standalone)");
+    const onModeChange = () => {
+      if (mq.matches || (navigator as any).standalone) {
+        setInstalled(true);
+        setShowAndroid(false);
+        setShowIOS(false);
+      }
+    };
+    mq.addEventListener?.("change", onModeChange);
 
     const onBeforeInstall = (e: Event) => {
       e.preventDefault();
+      deferredRef.current = e as BeforeInstallPromptEvent;
       setDeferred(e as BeforeInstallPromptEvent);
-      if (!dismissed) setTimeout(() => setShowAndroid(true), 1800);
+      setTimeout(() => {
+        if (!isStandalone()) setShowAndroid(true);
+      }, FIRST_DELAY);
     };
     const onInstalled = () => {
       setInstalled(true);
@@ -43,21 +58,30 @@ const InstallPrompt = () => {
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
     window.addEventListener("appinstalled", onInstalled);
 
-    // iOS Safari has no install prompt — show the friendly guide instead
-    if (isIOS() && !dismissed) {
-      setTimeout(() => setShowIOS(true), 1800);
+    // iOS Safari has no install prompt — show the friendly guide on every visit
+    if (isIOS()) {
+      setTimeout(() => {
+        if (!isStandalone()) setShowIOS(true);
+      }, FIRST_DELAY);
     }
+
     return () => {
+      mq.removeEventListener?.("change", onModeChange);
       window.removeEventListener("beforeinstallprompt", onBeforeInstall);
       window.removeEventListener("appinstalled", onInstalled);
     };
   }, []);
 
+  // "Not now" → hide, but remind again after 5 minutes (and again on every refresh)
   const dismiss = () => {
-    localStorage.setItem(DISMISS_KEY, "1");
     setShowAndroid(false);
     setShowIOS(false);
     setIosHelp(false);
+    setTimeout(() => {
+      if (isStandalone()) return;
+      if (isIOS()) setShowIOS(true);
+      else if (deferredRef.current) setShowAndroid(true);
+    }, REMIND_MS);
   };
 
   const install = async () => {
@@ -66,6 +90,7 @@ const InstallPrompt = () => {
     const choice = await deferred.userChoice;
     if (choice.outcome === "accepted") setInstalled(true);
     setShowAndroid(false);
+    deferredRef.current = null;
     setDeferred(null);
   };
 
@@ -93,7 +118,7 @@ const InstallPrompt = () => {
             transition={{ type: "spring", stiffness: 260, damping: 24 }}
             className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-96 z-[70]"
           >
-            <div className="bg-card rounded-2xl border border-primary/40 shadow-glow p-5">
+            <div className="relative bg-card rounded-2xl border border-primary/40 shadow-glow p-5">
               <button
                 onClick={dismiss}
                 className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
@@ -108,7 +133,7 @@ const InstallPrompt = () => {
                     Get the Kim's Glam Lab app
                   </p>
                   <p className="text-xs text-muted-foreground font-body mt-1">
-                    Install it on your phone for one-tap bookings, prices & bookings that work like an app.
+                    Install it on your phone for one-tap bookings, prices & your appointment calendar.
                   </p>
                 </div>
               </div>
@@ -131,7 +156,7 @@ const InstallPrompt = () => {
             transition={{ type: "spring", stiffness: 260, damping: 24 }}
             className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-96 z-[70]"
           >
-            <div className="bg-card rounded-2xl border border-primary/40 shadow-glow p-5">
+            <div className="relative bg-card rounded-2xl border border-primary/40 shadow-glow p-5">
               <button
                 onClick={dismiss}
                 className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
