@@ -255,7 +255,7 @@
       "id": "g1",
       "name": "Jonathan Kabango",
       "rating": 5,
-      "text": "She does a wonderful job, my nails lasted for weeks after she gave me a buff and shine, I'd highly recommend her to any one that would like to get their nails done.🔥🔥",
+      "text": "She does a wonderful job, my nails lasted for weeks after she gave me a buff and shine, I'd highly recommend her to any one that would like to get their nails done.🔥🔥🔥",
       "source": "Google",
       "createdAt": ""
     },
@@ -284,7 +284,5 @@
       "createdAt": ""
     }
   ],
-  "blockedDays": [
-    "2026-08-13"
-  ]
+  "blockedDays": []
 }

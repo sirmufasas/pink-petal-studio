@@ -155,6 +155,7 @@ const AdminPanel = () => {
           </div>
         )}
 
+
         {/* Tabs */}
         <div className="max-w-5xl mx-auto flex flex-wrap gap-2 justify-center mb-10">
           {TABS.map((t) => (
@@ -299,9 +300,11 @@ const ConnectionTab = () => {
     <div className="max-w-2xl mx-auto bg-card rounded-2xl border border-border/50 shadow-soft p-6 sm:p-8 space-y-5">
       <h2 className="font-display text-2xl font-bold text-foreground">GitHub Connection</h2>
       <p className="text-sm text-muted-foreground font-body leading-relaxed">
-        Your website's content (photos, prices, settings) is stored in your GitHub repository.
-        Paste a GitHub personal access token with <strong>repo contents</strong> permission once —
-        it stays saved only in this browser and powers the Publish buttons.
+        ✅ <strong>You're permanently connected on every device.</strong> Any phone or browser:
+        unlock with your password and publish — no token needed.
+      </p>
+      <p className="text-sm text-muted-foreground font-body leading-relaxed">
+        Optionally paste a different GitHub token below to use just on this device.
       </p>
       <div className="space-y-2">
         <label className="text-sm font-body font-bold text-foreground">Access token</label>
