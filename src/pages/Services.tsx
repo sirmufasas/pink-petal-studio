@@ -57,7 +57,9 @@ const Services = () => {
                         <span className="text-xs text-muted-foreground font-body">{item.duration}</span>
                       )}
                     </div>
-                    <span className="font-display text-xl font-bold text-primary">{item.price}</span>
+                    {item.price && (
+                      <span className="font-display text-xl font-bold text-primary">{item.price}</span>
+                    )}
                   </div>
                 ))}
               </div>

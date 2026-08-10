@@ -488,6 +488,9 @@ const ServicesTab = ({ data, requireToken }: { data: SiteData | null; requireTok
 
   return (
     <div className="space-y-8">
+      <p className="text-xs text-muted-foreground font-body text-center -mt-4">
+        Tip: leave a price blank to list the service without showing a price (like your nail services).
+      </p>
       {draft.map((cat, ci) => (
         <div key={cat.id} className="bg-card rounded-2xl border border-border/50 shadow-soft p-6">
           <div className="flex items-center gap-3 mb-4">
@@ -685,24 +688,6 @@ const SettingsTab = ({ data, requireToken }: { data: SiteData | null; requireTok
             value={draft?.whatsappNumber || ""}
             onChange={(e) => setDraft({ ...draft, whatsappNumber: e.target.value })}
             placeholder="27719843649"
-            className="bg-background"
-          />
-        </div>
-      </div>
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-body font-bold text-foreground mb-2">Hero title</label>
-          <Input
-            value={draft?.heroTitle || ""}
-            onChange={(e) => setDraft({ ...draft, heroTitle: e.target.value })}
-            className="bg-background"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-body font-bold text-foreground mb-2">Hero tagline</label>
-          <Input
-            value={draft?.heroTagline || ""}
-            onChange={(e) => setDraft({ ...draft, heroTagline: e.target.value })}
             className="bg-background"
           />
         </div>

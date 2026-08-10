@@ -6,6 +6,19 @@ import face from "@/assets/portfolio/face.jpg";
 import gorjass from "@/assets/portfolio/gorjass.jpg";
 import faceee from "@/assets/portfolio/faceee.jpg";
 import glamSmile from "@/assets/portfolio/glam-smile.jpg";
+import french from "@/assets/portfolio/french.jpg";
+import brown from "@/assets/portfolio/brown.jpg";
+import nice from "@/assets/portfolio/nice.jpg";
+import pinkHearts from "@/assets/portfolio/pink-hearts.jpg";
+import red from "@/assets/portfolio/red.jpg";
+import emerald from "@/assets/portfolio/emerald.jpg";
+import toes from "@/assets/portfolio/toes.jpg";
+import pinkOmbre from "@/assets/portfolio/pink-ombre.jpg";
+import zebraStiletto from "@/assets/portfolio/zebra-stiletto.jpg";
+import redHeartToes from "@/assets/portfolio/red-heart-toes.jpg";
+import pinkMarble from "@/assets/portfolio/pink-marble.jpg";
+import babyPink from "@/assets/portfolio/baby-pink.jpg";
+import blackGold from "@/assets/portfolio/black-gold.jpg";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -62,6 +75,19 @@ export const ASSET_MAP: Record<string, string> = {
   gorjass,
   faceee,
   "glam-smile": glamSmile,
+  french,
+  brown,
+  nice,
+  "pink-hearts": pinkHearts,
+  red,
+  emerald,
+  toes,
+  "pink-ombre": pinkOmbre,
+  "zebra-stiletto": zebraStiletto,
+  "red-heart-toes": redHeartToes,
+  "pink-marble": pinkMarble,
+  "baby-pink": babyPink,
+  "black-gold": blackGold,
 };
 
 export function resolveImage(path: string): string {
@@ -78,10 +104,23 @@ export const DEFAULT_DATA: SiteData = {
     phoneDisplay: "071 984 3649",
     phoneHref: "tel:+27719843649",
     whatsappNumber: "27719843649",
-    heroTitle: "Lashes, Brows & Makeup",
+    heroTitle: "Nails & Makeup",
     heroTagline: "That Speak Beauty",
   },
   services: [
+    {
+      id: "nails",
+      category: "Nails",
+      items: [
+        { name: "Gel Polish Manicure", price: "", duration: "1 hr" },
+        { name: "Gel Polish Pedicure", price: "", duration: "1 hr" },
+        { name: "Short Nails (Acrylic / Polygel)", price: "", duration: "1.5 hrs" },
+        { name: "Medium Nails (Acrylic / Polygel)", price: "", duration: "1.5 hrs" },
+        { name: "Long Nails (Acrylic / Polygel)", price: "", duration: "2 hrs" },
+        { name: "Buff and Shine", price: "", duration: "30 min" },
+        { name: "Soak-off", price: "", duration: "30 min" },
+      ],
+    },
     {
       id: "lashes",
       category: "Eyelashes",
@@ -117,7 +156,20 @@ export const DEFAULT_DATA: SiteData = {
   ],
   gallery: [
     { id: "d-lash1", path: "bundled:lashes-cat-eye", description: "Cat-eye cluster lashes — wispy & dramatic ✨", createdAt: "" },
-    { id: "d-brow1", path: "bundled:brows-sculpted", description: "Sculpted & tinted brows ", createdAt: "" },
+    { id: "d-brow1", path: "bundled:brows-sculpted", description: "Sculpted & tinted brows 🤎", createdAt: "" },
+    { id: "d1", path: "bundled:french", description: "Classic French tips — timeless elegance 🤍", createdAt: "" },
+    { id: "d2", path: "bundled:emerald", description: "Emerald green French tips for the gala 💚", createdAt: "" },
+    { id: "d3", path: "bundled:pink-hearts", description: "Soft pink gel with hand-painted hearts 💕", createdAt: "" },
+    { id: "d4", path: "bundled:brown", description: "Mocha French — warm & sophisticated ☕", createdAt: "" },
+    { id: "d5", path: "bundled:red", description: "Classic red gel — bold & glossy ❤️", createdAt: "" },
+    { id: "d6", path: "bundled:nice", description: "Crisp white French set — clean perfection ✨", createdAt: "" },
+    { id: "d7", path: "bundled:toes", description: "Emerald French pedicure to match 💚", createdAt: "" },
+    { id: "d8", path: "bundled:pink-ombre", description: "Pink ombré gel — soft & dreamy 🌸", createdAt: "" },
+    { id: "d9", path: "bundled:zebra-stiletto", description: "Red & zebra stiletto stunners 🦓❤️", createdAt: "" },
+    { id: "d10", path: "bundled:red-heart-toes", description: "Red French pedi with hearts ❤️", createdAt: "" },
+    { id: "d11", path: "bundled:pink-marble", description: "Bubblegum pink with marble accent 💗", createdAt: "" },
+    { id: "d12", path: "bundled:baby-pink", description: "Clean male - Buff and Shine ✨", createdAt: "" },
+    { id: "d13", path: "bundled:black-gold", description: "Black stiletto with gold flake 🖤✨", createdAt: "" },
     { id: "d-m1", path: "bundled:face", description: "Bridal glam with shimmer eyes 👰🏽", createdAt: "" },
     { id: "d-m2", path: "bundled:gorjass", description: "Soft glam — radiant & glowing ✨", createdAt: "" },
     { id: "d-m3", path: "bundled:faceee", description: "Sun-kissed everyday glam 💄", createdAt: "" },
@@ -330,6 +382,8 @@ export const TIME_SLOTS = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00",
 export function waLink(number: string, text: string): string {
   return `https://wa.me/${number.replace(/\D/g, "")}?text=${encodeURIComponent(text)}`;
 }
+
+export const WHATSAPP_LINK = "https://wa.me/27719843649";
 
 export function priceNumber(price: string): number {
   const n = parseInt(String(price).replace(/[^\d]/g, ""), 10);

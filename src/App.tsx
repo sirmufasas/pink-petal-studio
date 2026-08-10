@@ -12,6 +12,7 @@ import Services from "./pages/Services.tsx";
 import Portfolio from "./pages/Portfolio.tsx";
 import BookAppointment from "./pages/BookAppointment.tsx";
 import Admin from "./pages/Admin.tsx";
+import NailStudio from "./pages/NailStudio.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import kimmLogo from "./assets/kimm.jpg";
 
@@ -287,6 +288,7 @@ const App = () => {
               <Route path="/services" element={<Services />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/book" element={<BookAppointment />} />
+              <Route path="/studio" element={<NailStudio />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

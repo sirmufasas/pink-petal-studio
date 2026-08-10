@@ -259,7 +259,7 @@ const BookAppointment = () => {
                   <p className="text-xs font-body tracking-[0.25em] uppercase text-primary mb-2">{cat.category}</p>
                   <div className="flex flex-wrap gap-2">
                     {cat.items.map((item) => {
-                      const value = `${cat.category} — ${item.name} — ${item.price}`;
+                      const value = `${cat.category} — ${item.name}${item.price ? ` — ${item.price}` : ""}`;
                       return (
                         <button
                           key={value}
@@ -271,7 +271,8 @@ const BookAppointment = () => {
                               : "bg-background text-muted-foreground border-border hover:border-primary hover:text-primary"
                           }`}
                         >
-                          {item.name} · {item.price}
+                          {item.name}
+                          {item.price ? ` · ${item.price}` : ""}
                         </button>
                       );
                     })}
