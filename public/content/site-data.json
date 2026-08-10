@@ -308,5 +308,7 @@
       "createdAt": ""
     }
   ],
-  "blockedDays": []
+  "blockedDays": [
+    "2026-08-14"
+  ]
 }
