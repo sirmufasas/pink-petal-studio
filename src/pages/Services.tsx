@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Calendar, Sparkles, ShieldCheck } from "lucide-react";
+import { Calendar, Sparkles, ShieldCheck, ChevronRight } from "lucide-react";
 import { useSiteData } from "@/lib/content";
 
 const policy = [
@@ -17,6 +17,10 @@ const policy = [
 const Services = () => {
   const data = useSiteData();
   const services = data?.services || [];
+  const navigate = useNavigate();
+
+  const bookValue = (category: string, item: { name: string; price: string }) =>
+    `${category} — ${item.name}${item.price ? ` — ${item.price}` : ""}`;
 
   return (
     <div className="min-h-screen pt-24 pb-16">
@@ -50,17 +54,25 @@ const Services = () => {
               </h2>
               <div className="bg-card rounded-2xl border border-border/50 shadow-soft overflow-hidden divide-y divide-border/50">
                 {group.items.map((item) => (
-                  <div key={item.name} className="flex items-center justify-between px-6 py-5 hover:bg-secondary/30 transition-colors">
+                  <button
+                    key={item.name}
+                    type="button"
+                    onClick={() => navigate(`/book?service=${encodeURIComponent(bookValue(group.category, item))}`)}
+                    className="w-full flex items-center justify-between px-6 py-5 hover:bg-secondary/30 transition-colors text-left cursor-pointer group"
+                  >
                     <div>
                       <h3 className="font-body font-bold text-foreground">{item.name}</h3>
                       {item.duration && (
                         <span className="text-xs text-muted-foreground font-body">{item.duration}</span>
                       )}
                     </div>
-                    {item.price && (
-                      <span className="font-display text-xl font-bold text-primary">{item.price}</span>
-                    )}
-                  </div>
+                    <div className="flex items-center gap-3">
+                      {item.price && (
+                        <span className="font-display text-xl font-bold text-primary">{item.price}</span>
+                      )}
+                      <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                  </button>
                 ))}
               </div>
             </motion.div>

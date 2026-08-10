@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,17 @@ const BookAppointment = () => {
 
   const dateStr = date ? format(date, "yyyy-MM-dd") : "";
   const [bookedTimes, setBookedTimes] = useState<string[]>([]);
+
+  // arriving from the Services page with a service already chosen
+  const [searchParams] = useSearchParams();
+  const preselect = searchParams.get("service") || "";
+  useEffect(() => {
+    if (!preselect || !services.length) return;
+    const exists = services.some((c) =>
+      c.items.some((i) => `${c.category} — ${i.name}${i.price ? ` — ${i.price}` : ""}` === preselect)
+    );
+    if (exists) setForm((f) => ({ ...f, service: preselect }));
+  }, [preselect, services]);
 
   // live availability from the shared bookings store
   useEffect(() => {

@@ -250,7 +250,40 @@
       "createdAt": ""
     }
   ],
-  "reviews": [],
+  "reviews": [
+    {
+      "id": "g1",
+      "name": "Jonathan Kabango",
+      "rating": 5,
+      "text": "She does a wonderful job, my nails lasted for weeks after she gave me a buff and shine, I'd highly recommend her to any one that would like to get their nails done.🔥🔥",
+      "source": "Google",
+      "createdAt": ""
+    },
+    {
+      "id": "g2",
+      "name": "Theeyoung Chun",
+      "rating": 5,
+      "text": "Amazing service and beautiful work! You'd never think she only started recently. She's incredibly talented and pays attention to every detail. Highly recommend!",
+      "source": "Google",
+      "createdAt": ""
+    },
+    {
+      "id": "g3",
+      "name": "Jabulile Motaung",
+      "rating": 5,
+      "text": "Stunning nails 😍, relaxing environment.",
+      "source": "Google",
+      "createdAt": ""
+    },
+    {
+      "id": "g4",
+      "name": "Nicole Adams",
+      "rating": 4,
+      "text": "Great service and friendly. I had a good experience overall 😊",
+      "source": "Google",
+      "createdAt": ""
+    }
+  ],
   "blockedDays": [
     "2026-08-13"
   ]
