@@ -142,12 +142,6 @@
   ],
   "gallery": [
     {
-      "id": "d-lash1",
-      "path": "bundled:lashes-cat-eye",
-      "description": "Cat-eye cluster lashes — wispy & dramatic ✨",
-      "createdAt": ""
-    },
-    {
       "id": "d-brow1",
       "path": "bundled:brows-sculpted",
       "description": "Sculpted & tinted brows 🤎",
