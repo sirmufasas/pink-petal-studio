@@ -47,12 +47,22 @@ export interface SiteSettings {
   whatsappNumber: string; // digits only, e.g. 27719843649
   heroTitle: string;
   heroTagline: string;
+  googleReviewUrl: string;
+}
+export interface Review {
+  id: string;
+  name: string;
+  rating: number; // 1..5
+  text: string;
+  source: "Google" | "Site";
+  createdAt: string;
 }
 export interface SiteData {
   version: number;
   settings: SiteSettings;
   services: ServiceCategory[];
   gallery: GalleryImage[];
+  reviews: Review[];
   blockedDays: string[];
 }
 
@@ -106,7 +116,9 @@ export const DEFAULT_DATA: SiteData = {
     whatsappNumber: "27719843649",
     heroTitle: "Nails & Makeup",
     heroTagline: "That Speak Beauty",
+    googleReviewUrl: "https://www.google.com/search?q=kims+glam+lab",
   },
+  reviews: [],
   services: [
     {
       id: "nails",
@@ -192,6 +204,7 @@ function normalize(raw: any): SiteData {
     settings: { ...d.settings, ...(raw.settings || {}) },
     services: Array.isArray(raw.services) && raw.services.length ? raw.services : d.services,
     gallery: Array.isArray(raw.gallery) ? raw.gallery : d.gallery,
+    reviews: Array.isArray(raw.reviews) ? raw.reviews : [],
     blockedDays: Array.isArray(raw.blockedDays) ? raw.blockedDays : [],
   };
 }

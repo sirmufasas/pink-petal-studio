@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Camera, Upload, Trash2, ImagePlus, Sparkles, CalendarDays, Lock, Eye, EyeOff,
-  Plug, Plus, Save, Settings2, ListOrdered, Images, Link2,
+  Plug, Plus, Save, Settings2, ListOrdered, Images, Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,8 +14,9 @@ import { cn } from "@/lib/utils";
 import {
   useSiteData, fetchSiteData, saveSiteData, getToken, setToken, testConnection,
   addGalleryImage, deleteGalleryImage, resolveImage,
-  type SiteData, type ServiceCategory, type ServiceItem,
+  type SiteData, type ServiceCategory, type ServiceItem, type Review,
 } from "@/lib/content";
+import { Stars } from "./Reviews";
 
 // ── Change this to your desired password ──────────────────────────────────────
 const ADMIN_PASSWORD = "admin123";
@@ -98,11 +99,12 @@ const PasswordGate = ({ onUnlock }: { onUnlock: () => void }) => {
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
-type Tab = "photos" | "services" | "days" | "settings" | "connection";
+type Tab = "photos" | "services" | "reviews" | "days" | "settings" | "connection";
 
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "photos", label: "Photos", icon: Images },
   { id: "services", label: "Services & Prices", icon: ListOrdered },
+  { id: "reviews", label: "Reviews", icon: Star },
   { id: "days", label: "Booked Days", icon: CalendarDays },
   { id: "settings", label: "Site Settings", icon: Settings2 },
   { id: "connection", label: "Connection", icon: Plug },
@@ -168,6 +170,7 @@ const AdminPanel = () => {
           {tab === "connection" && <ConnectionTab />}
           {tab === "photos" && <PhotosTab data={data} requireToken={requireToken} setSaving={setSaving} saving={saving} />}
           {tab === "services" && <ServicesTab data={data} requireToken={requireToken} />}
+          {tab === "reviews" && <ReviewsTab data={data} requireToken={requireToken} />}
           {tab === "days" && <DaysTab data={data} requireToken={requireToken} />}
           {tab === "settings" && <SettingsTab data={data} requireToken={requireToken} />}
         </div>
@@ -582,6 +585,93 @@ const ServicesTab = ({ data, requireToken }: { data: SiteData | null; requireTok
   );
 };
 
+// ── Reviews ───────────────────────────────────────────────────────────────────
+const ReviewsTab = ({ data, requireToken }: { data: SiteData | null; requireToken: () => boolean }) => {
+  const [draft, setDraft] = useState<Review[]>(() => JSON.parse(JSON.stringify(data?.reviews || [])));
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (data) setDraft(JSON.parse(JSON.stringify(data.reviews)));
+  }, [data?.reviews]);
+
+  const update = (i: number, patch: Partial<Review>) => {
+    const next = [...draft];
+    next[i] = { ...next[i], ...patch };
+    setDraft(next);
+  };
+
+  const save = async () => {
+    if (!requireToken()) return;
+    const cleaned = draft.filter((r) => r.name.trim() && r.text.trim());
+    setBusy(true);
+    try {
+      const full = await fetchSiteData(true);
+      full.reviews = cleaned;
+      await saveSiteData(full, "⭐ Update reviews");
+      toast.success("Reviews published to the live site ✅");
+    } catch (e: any) {
+      toast.error(e?.message || "Could not save");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="max-w-2xl mx-auto text-center text-sm text-muted-foreground font-body">
+        Add your Google reviews here (copy them from your Google listing) or publish reviews
+        clients sent you — they appear on the Reviews page for everyone.
+      </div>
+      {draft.map((r, i) => (
+        <div key={r.id} className="max-w-2xl mx-auto bg-card rounded-2xl border border-border/50 shadow-soft p-6 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <Input value={r.name} placeholder="Client name" onChange={(e) => update(i, { name: e.target.value })} className="bg-background max-w-xs" />
+            <div className="flex items-center gap-3">
+              <select
+                value={r.rating}
+                onChange={(e) => update(i, { rating: Number(e.target.value) })}
+                className="bg-background border border-border rounded-lg px-2 py-1.5 text-sm font-body text-foreground"
+              >
+                {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} ★</option>)}
+              </select>
+              <select
+                value={r.source}
+                onChange={(e) => update(i, { source: e.target.value as Review["source"] })}
+                className="bg-background border border-border rounded-lg px-2 py-1.5 text-sm font-body text-foreground"
+              >
+                <option value="Google">Google</option>
+                <option value="Site">Client</option>
+              </select>
+              <button onClick={() => setDraft(draft.filter((_, x) => x !== i))} className="text-destructive hover:opacity-70">
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+          <Stars n={r.rating} size="h-4 w-4" />
+          <Textarea value={r.text} rows={3} placeholder="Review text" onChange={(e) => update(i, { text: e.target.value })} className="bg-background" />
+        </div>
+      ))}
+      <div className="flex flex-wrap gap-3 justify-center">
+        <Button
+          variant="outline"
+          onClick={() =>
+            setDraft([
+              ...draft,
+              { id: `rev-${Date.now()}`, name: "", rating: 5, text: "", source: "Google", createdAt: new Date().toISOString() },
+            ])
+          }
+        >
+          <Plus className="mr-2 h-4 w-4" /> Add review
+        </Button>
+        <Button variant="hero" onClick={save} disabled={busy}>
+          <Save className="mr-2 h-4 w-4" />
+          {busy ? "Publishing…" : "Publish Reviews"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 // ── Booked days ───────────────────────────────────────────────────────────────
 const DaysTab = ({ data, requireToken }: { data: SiteData | null; requireToken: () => boolean }) => {
   const blockedDays = data?.blockedDays || [];
@@ -691,6 +781,20 @@ const SettingsTab = ({ data, requireToken }: { data: SiteData | null; requireTok
             className="bg-background"
           />
         </div>
+      </div>
+      <div>
+        <label className="block text-sm font-body font-bold text-foreground mb-2">
+          Google reviews link (where "Post on Google" sends clients)
+        </label>
+        <Input
+          value={draft?.googleReviewUrl || ""}
+          onChange={(e) => setDraft({ ...draft, googleReviewUrl: e.target.value })}
+          placeholder="https://www.google.com/search?q=kims+glam+lab"
+          className="bg-background"
+        />
+        <p className="text-xs text-muted-foreground font-body mt-1">
+          Once your Google Business Profile is live, paste its "write a review" link here.
+        </p>
       </div>
       <Button variant="hero" onClick={save} disabled={busy}>
         <Save className="mr-2 h-4 w-4" />

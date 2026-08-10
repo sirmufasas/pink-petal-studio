@@ -10,6 +10,7 @@ import GlobalGalleryStrip from "@/components/GlobalGalleryStrip";
 import Index from "./pages/Index.tsx";
 import Services from "./pages/Services.tsx";
 import Portfolio from "./pages/Portfolio.tsx";
+import Reviews from "./pages/Reviews.tsx";
 import BookAppointment from "./pages/BookAppointment.tsx";
 import Admin from "./pages/Admin.tsx";
 import NailStudio from "./pages/NailStudio.tsx";
@@ -287,6 +288,7 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/services" element={<Services />} />
               <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/reviews" element={<Reviews />} />
               <Route path="/book" element={<BookAppointment />} />
               <Route path="/studio" element={<NailStudio />} />
               <Route path="/admin" element={<Admin />} />
