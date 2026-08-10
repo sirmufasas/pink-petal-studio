@@ -6,16 +6,20 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import GlobalGalleryStrip from "@/components/GlobalGalleryStrip";
 import Index from "./pages/Index.tsx";
 import Services from "./pages/Services.tsx";
 import Portfolio from "./pages/Portfolio.tsx";
 import BookAppointment from "./pages/BookAppointment.tsx";
 import Admin from "./pages/Admin.tsx";
-import NailStudio from "./pages/NailStudio.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import kimmLogo from "./assets/kimm.jpg";
 
 const queryClient = new QueryClient();
+
+// Works both at a domain root (Lovable/custom) and under /pink-petal-studio (GitHub Pages)
+const BASE = "/pink-petal-studio";
+const basename = typeof window !== "undefined" && window.location.pathname.startsWith(BASE) ? BASE : "/";
 
 // ── Sparkle particle type ──────────────────────────────────────────────────
 interface Sparkle {
@@ -58,7 +62,7 @@ const GlamLoader = ({ onDone }: { onDone: () => void }) => {
   const [sparkles] = useState(() => generateSparkles(40));
 
   useEffect(() => {
-    const DURATION = 15000; // 15 seconds
+    const DURATION = 4000;
     const interval = 50;
     const step = (interval / DURATION) * 100;
 
@@ -276,17 +280,17 @@ const App = () => {
         <Sonner />
         {loading && <GlamLoader onDone={() => setLoading(false)} />}
         {!loading && (
-          <BrowserRouter>
+          <BrowserRouter basename={basename}>
             <Navbar />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/services" element={<Services />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/book" element={<BookAppointment />} />
-              <Route path="/studio" element={<NailStudio />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <GlobalGalleryStrip />
             <Footer />
           </BrowserRouter>
         )}

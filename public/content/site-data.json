@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "settings": {
+    "announcement": "",
+    "phoneDisplay": "071 984 3649",
+    "phoneHref": "tel:+27719843649",
+    "whatsappNumber": "27719843649",
+    "heroTitle": "Lashes, Brows & Makeup",
+    "heroTagline": "That Speak Beauty"
+  },
+  "services": [
+    {
+      "id": "lashes",
+      "category": "Eyelashes",
+      "items": [
+        { "name": "Temporary/Strip", "price": "R50", "duration": "20 min" },
+        { "name": "Classic Cluster", "price": "R100", "duration": "45 min" },
+        { "name": "Cat-eye Cluster", "price": "R120", "duration": "1 hr" },
+        { "name": "Volume Cluster", "price": "R150", "duration": "1.5 hrs" }
+      ]
+    },
+    {
+      "id": "brows",
+      "category": "Eyebrows",
+      "items": [
+        { "name": "Wax", "price": "R100", "duration": "30 min" },
+        { "name": "Tint", "price": "R100", "duration": "30 min" },
+        { "name": "Dermaplaning/Shaving", "price": "R50", "duration": "20 min" },
+        { "name": "Wax & Tint", "price": "R150", "duration": "1 hr" },
+        { "name": "Dermaplaning & Tint", "price": "R150", "duration": "1 hr" }
+      ]
+    },
+    {
+      "id": "makeup",
+      "category": "Makeup",
+      "items": [
+        { "name": "Soft Glam", "price": "R250", "duration": "1 hr" },
+        { "name": "Full Glam", "price": "R350", "duration": "1.5 hrs" },
+        { "name": "Evening Look", "price": "R350", "duration": "1.5 hrs" },
+        { "name": "Special Effects", "price": "R350", "duration": "1.5 hrs" },
+        { "name": "Bridal Look", "price": "R600", "duration": "2 hrs" }
+      ]
+    }
+  ],
+  "gallery": [
+    { "id": "d-lash1", "path": "bundled:lashes-cat-eye", "description": "Cat-eye cluster lashes — wispy & dramatic ✨", "createdAt": "" },
+    { "id": "d-brow1", "path": "bundled:brows-sculpted", "description": "Sculpted & tinted brows 🤎", "createdAt": "" },
+    { "id": "d-m1", "path": "bundled:face", "description": "Bridal glam with shimmer eyes 👰🏽", "createdAt": "" },
+    { "id": "d-m2", "path": "bundled:gorjass", "description": "Soft glam — radiant & glowing ✨", "createdAt": "" },
+    { "id": "d-m3", "path": "bundled:faceee", "description": "Sun-kissed everyday glam 💄", "createdAt": "" },
+    { "id": "d-m4", "path": "bundled:glam-smile", "description": "Glitter cut-crease — all smiles ✨", "createdAt": "" }
+  ],
+  "blockedDays": []
+}

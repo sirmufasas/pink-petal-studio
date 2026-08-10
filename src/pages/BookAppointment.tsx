@@ -4,82 +4,27 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar as CalendarUI } from "@/components/ui/calendar";
-import { Calendar, Sparkles, CheckCircle, Phone } from "lucide-react";
+import { Calendar, Sparkles, CheckCircle, Phone, Download, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import {
-  TIME_SLOTS,
-  addBooking,
-  getBookedTimes,
-  getBlockedDays,
-  WHATSAPP_HREF,
-} from "@/lib/booking-store";
-import { supabase } from "@/integrations/supabase/client";
+import { useSiteData, TIME_SLOTS, waLink, parseHours } from "@/lib/content";
+import { buildICS, downloadICS, googleCalUrl } from "@/lib/calendar";
 import { cn } from "@/lib/utils";
 
-const serviceOptions = [
-  "Gel Polish Manicure — R200",
-  "Gel Polish Pedicure — R200",
-  "Short Nails (Acrylic/Polygel) — R150",
-  "Medium Nails (Acrylic/Polygel) — R180",
-  "Long Nails (Acrylic/Polygel) — R200",
-  "Buff and Shine — R100",
-  "Soak-off — R100",
-  "Lashes — Classic — R150",
-  "Lashes — Cat-eye — R250",
-  "Lashes — Volume — R300",
-  "Soft Glam Makeup — R250",
-  "Full Glam Makeup — R350",
-  "Evening Makeup — R350",
-  "Bridal Makeup — R600",
-  "Other",
-];
-
 const BookAppointment = () => {
+  const data = useSiteData();
+  const services = data?.services || [];
+  const blockedDays = data?.blockedDays || [];
+  const waNumber = data?.settings.whatsappNumber || "27719843649";
+
   const [submitted, setSubmitted] = useState(false);
   const [whatsappUrl, setWhatsappUrl] = useState("");
-  const [whatsappMessage, setWhatsappMessage] = useState("");
+  const [clientCalUrl, setClientCalUrl] = useState("");
+  const [icsText, setIcsText] = useState("");
   const [date, setDate] = useState<Date | undefined>();
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    service: "",
-    time: "",
-    notes: "",
-  });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", service: "", time: "", notes: "" });
 
   const dateStr = date ? format(date, "yyyy-MM-dd") : "";
-  const [blockedDays, setBlockedDays] = useState<string[]>([]);
-  const [bookedTimes, setBookedTimes] = useState<string[]>([]);
-
-  // Load blocked days + subscribe to changes
-  useEffect(() => {
-    getBlockedDays().then(setBlockedDays).catch(() => {});
-    const ch = supabase
-      .channel("blocked_days_book")
-      .on("postgres_changes", { event: "*", schema: "public", table: "blocked_days" }, () => {
-        getBlockedDays().then(setBlockedDays).catch(() => {});
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, []);
-
-  // Load booked times for the selected date + subscribe
-  useEffect(() => {
-    if (!dateStr) { setBookedTimes([]); return; }
-    let active = true;
-    getBookedTimes(dateStr).then((t) => { if (active) setBookedTimes(t); }).catch(() => {});
-    const ch = supabase
-      .channel(`bookings_${dateStr}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "bookings", filter: `date=eq.${dateStr}` },
-        () => { getBookedTimes(dateStr).then((t) => { if (active) setBookedTimes(t); }).catch(() => {}); }
-      )
-      .subscribe();
-    return () => { active = false; supabase.removeChannel(ch); };
-  }, [dateStr]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,46 +34,62 @@ const BookAppointment = () => {
     if (!form.time) return toast.error("Please select a time slot");
     if (!form.service) return toast.error("Please select a service");
 
-    // Double-check the slot is still free
-    const latest = await getBookedTimes(dateStr);
-    if (latest.includes(form.time)) {
-      setBookedTimes(latest);
-      setForm({ ...form, time: "" });
-      return toast.error("Oops — that time was just booked. Please pick another.");
-    }
+    // find duration for the chosen service (e.g. "Eyelashes — Classic Cluster — R100")
+    const [catName, itemName] = form.service.split(" — ");
+    const cat = services.find((c) => c.category === catName);
+    const item = cat?.items.find((i) => i.name === itemName);
+    const hours = parseHours(item?.duration);
 
-    try {
-      await addBooking({
-        name: form.name,
-        phone: form.phone,
-        email: form.email,
-        service: form.service,
-        date: dateStr,
-        time: form.time,
-        notes: form.notes,
-      });
-    } catch (err: any) {
-      return toast.error(err?.message || "Could not save your booking. Please try again.");
-    }
+    const prettyDate = format(date, "EEE, dd MMM yyyy");
+    const title = `Kim's Glam Lab — ${form.service}`;
+    const details =
+      `Booking by ${form.name} (${form.phone})` +
+      (form.email ? ` / ${form.email}` : "") +
+      `\nService: ${form.service}` +
+      `\nDate: ${prettyDate} at ${form.time}` +
+      (form.notes ? `\nNotes: ${form.notes}` : "");
 
+    const ev = {
+      title,
+      description: details,
+      location: "Kim's Glam Lab, Winchester Hills, Johannesburg",
+      date: dateStr,
+      time: form.time,
+      hours,
+    };
+
+    // 1) client's phone calendar — .ics file downloads automatically
+    const ics = buildICS(ev);
+    setIcsText(ics);
+    downloadICS(ics);
+
+    // 2) Google Calendar links (client + Kim)
+    const kimCalUrl = googleCalUrl({
+      ...ev,
+      description: `${details}\n\nClient phone: ${form.phone}`,
+    });
+    setClientCalUrl(googleCalUrl(ev));
+
+    // 3) booking goes straight to Kim's phone on WhatsApp, with a one-tap
+    //    "add to calendar" link for her phone too
     const msg =
       `Hi Kim! I'd like to book an appointment 💖\n\n` +
       `*Name:* ${form.name}\n` +
       `*Phone:* ${form.phone}\n` +
       (form.email ? `*Email:* ${form.email}\n` : "") +
       `*Service:* ${form.service}\n` +
-      `*Date:* ${format(date, "EEE, dd MMM yyyy")}\n` +
+      `*Date:* ${prettyDate}\n` +
       `*Time:* ${form.time}\n` +
-      (form.notes ? `*Notes:* ${form.notes}\n` : "");
-    const waUrl = `${WHATSAPP_HREF}&text=${encodeURIComponent(msg)}`;
-    setWhatsappUrl(waUrl);
-    setWhatsappMessage(msg);
+      (form.notes ? `*Notes:* ${form.notes}\n` : "") +
+      `\n📅 Add this booking to your calendar:\n${kimCalUrl}`;
+    const wa = waLink(waNumber, msg);
+    setWhatsappUrl(wa);
 
     setSubmitted(true);
-    toast.success("Opening WhatsApp...");
-    window.location.href = waUrl;
+    toast.success("Booking saved to your calendar 📅");
+    // try to open WhatsApp so the booking lands on Kim's phone
+    window.open(wa, "_blank");
   };
-
 
   if (submitted) {
     return (
@@ -141,39 +102,48 @@ const BookAppointment = () => {
           <div className="w-20 h-20 rounded-full bg-gradient-hero mx-auto mb-6 flex items-center justify-center">
             <CheckCircle className="h-10 w-10 text-primary-foreground" />
           </div>
-          <h2 className="font-display text-3xl font-bold text-foreground mb-4">
-            Request Sent!
-          </h2>
+          <h2 className="font-display text-3xl font-bold text-foreground mb-4">Booking Sent! 📅</h2>
           <p className="text-muted-foreground font-body mb-2">
             Thank you, <strong className="text-foreground">{form.name}</strong>!
           </p>
           <p className="text-muted-foreground font-body mb-6">
-            Your booking for <strong className="text-primary">{form.service}</strong> on{" "}
+            Your appointment for <strong className="text-primary">{form.service}</strong> on{" "}
             <strong className="text-foreground">{dateStr}</strong> at{" "}
-            <strong className="text-foreground">{form.time}</strong> is ready.
+            <strong className="text-foreground">{form.time}</strong> was saved to your phone
+            calendar and sent to Kim on WhatsApp.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+          <div className="flex flex-col gap-3 justify-center mb-6">
             <a
-              href={whatsappUrl || WHATSAPP_HREF}
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-hero text-primary-foreground shadow-soft hover:opacity-90 transition-opacity font-body font-bold"
             >
               <Phone className="h-5 w-5" />
-              Open WhatsApp App
+              Confirm on WhatsApp
+            </a>
+            <a href={clientCalUrl} target="_blank" rel="noopener noreferrer">
+              <Button type="button" variant="hero-outline" className="w-full px-8 py-4 rounded-full">
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Add to Google Calendar
+              </Button>
             </a>
             <Button
               type="button"
               variant="hero-outline"
-              className="px-8 py-4 rounded-full"
-              onClick={async () => {
-                await navigator.clipboard.writeText(whatsappMessage);
-                toast.success("Booking message copied");
+              className="w-full px-8 py-4 rounded-full"
+              onClick={() => {
+                downloadICS(icsText);
+                toast.success("Calendar file downloaded");
               }}
             >
-              Copy Message
+              <Download className="mr-2 h-4 w-4" />
+              Download Calendar File (.ics)
             </Button>
           </div>
           <p className="text-xs text-muted-foreground font-body mb-6">
-            If WhatsApp is blocked in preview, copy the message and paste it into WhatsApp.
+            Kim receives your booking on WhatsApp with a one-tap link that puts it straight into
+            her phone calendar too.
           </p>
           <div>
             <Button
@@ -182,7 +152,8 @@ const BookAppointment = () => {
                 setSubmitted(false);
                 setDate(undefined);
                 setWhatsappUrl("");
-                setWhatsappMessage("");
+                setClientCalUrl("");
+                setIcsText("");
                 setForm({ name: "", phone: "", email: "", service: "", time: "", notes: "" });
               }}
             >
@@ -211,17 +182,9 @@ const BookAppointment = () => {
           </div>
           <h1 className="font-display text-5xl font-bold text-foreground">Book Now</h1>
           <p className="text-muted-foreground font-body mt-4 max-w-lg mx-auto">
-            Pick an available day, choose your time and service, and Kim will confirm your booking.
+            Pick an available day, choose your time and service — your booking goes straight into
+            both your calendar and Kim's.
           </p>
-          <a
-            href={WHATSAPP_HREF}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="WhatsApp Kim"
-            className="inline-flex items-center justify-center p-3 rounded-full bg-gradient-hero text-primary-foreground shadow-soft mt-4"
-          >
-            <Phone className="h-4 w-4" />
-          </a>
         </motion.div>
 
         <motion.form
@@ -233,15 +196,16 @@ const BookAppointment = () => {
         >
           {/* Calendar */}
           <div>
-            <label className="block text-sm font-body font-bold text-foreground mb-3">
-              Pick a Date *
-            </label>
+            <label className="block text-sm font-body font-bold text-foreground mb-3">Pick a Date *</label>
             <div className="flex flex-col lg:flex-row gap-6 items-start">
               <div className="bg-background rounded-xl border border-border/50 p-2 mx-auto">
                 <CalendarUI
                   mode="single"
                   selected={date}
-                  onSelect={(d) => { setDate(d); setForm({ ...form, time: "" }); }}
+                  onSelect={(d) => {
+                    setDate(d);
+                    setForm({ ...form, time: "" });
+                  }}
                   disabled={(d) => {
                     const ds = format(d, "yyyy-MM-dd");
                     return d < today || blockedDays.includes(ds);
@@ -258,11 +222,7 @@ const BookAppointment = () => {
                   <span className="w-3 h-3 rounded-full bg-muted" />
                   <span className="text-muted-foreground">Unavailable / fully booked</span>
                 </div>
-                {date && (
-                  <p className="text-foreground font-bold pt-2">
-                    {format(date, "EEEE, dd MMMM yyyy")}
-                  </p>
-                )}
+                {date && <p className="text-foreground font-bold pt-2">{format(date, "EEEE, dd MMMM yyyy")}</p>}
               </div>
             </div>
           </div>
@@ -270,51 +230,53 @@ const BookAppointment = () => {
           {/* Time slots */}
           {date && (
             <div>
-              <label className="block text-sm font-body font-bold text-foreground mb-2">
-                Available Times *
-              </label>
+              <label className="block text-sm font-body font-bold text-foreground mb-2">Available Times *</label>
               <div className="flex flex-wrap gap-2">
-                {TIME_SLOTS.map((t) => {
-                  const taken = bookedTimes.includes(t);
-                  return (
-                    <button
-                      key={t}
-                      type="button"
-                      disabled={taken}
-                      onClick={() => setForm({ ...form, time: t })}
-                      className={`px-4 py-2 rounded-full text-sm font-body border transition-all ${
-                        taken
-                          ? "bg-muted text-muted-foreground border-muted cursor-not-allowed line-through opacity-60"
-                          : form.time === t
-                          ? "bg-primary text-primary-foreground border-primary shadow-soft"
-                          : "bg-background text-muted-foreground border-border hover:border-primary hover:text-primary"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  );
-                })}
+                {TIME_SLOTS.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setForm({ ...form, time: t })}
+                    className={`px-4 py-2 rounded-full text-sm font-body border transition-all ${
+                      form.time === t
+                        ? "bg-primary text-primary-foreground border-primary shadow-soft"
+                        : "bg-background text-muted-foreground border-border hover:border-primary hover:text-primary"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
               </div>
             </div>
           )}
 
-          {/* Service */}
+          {/* Service — grouped, straight from the admin price list */}
           <div>
             <label className="block text-sm font-body font-bold text-foreground mb-2">Service *</label>
-            <div className="flex flex-wrap gap-2">
-              {serviceOptions.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setForm({ ...form, service: s })}
-                  className={`px-4 py-2 rounded-full text-sm font-body border transition-all ${
-                    form.service === s
-                      ? "bg-primary text-primary-foreground border-primary shadow-soft"
-                      : "bg-background text-muted-foreground border-border hover:border-primary hover:text-primary"
-                  }`}
-                >
-                  {s}
-                </button>
+            <div className="space-y-4">
+              {services.map((cat) => (
+                <div key={cat.id}>
+                  <p className="text-xs font-body tracking-[0.25em] uppercase text-primary mb-2">{cat.category}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {cat.items.map((item) => {
+                      const value = `${cat.category} — ${item.name} — ${item.price}`;
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => setForm({ ...form, service: value })}
+                          className={`px-4 py-2 rounded-full text-sm font-body border transition-all ${
+                            form.service === value
+                              ? "bg-primary text-primary-foreground border-primary shadow-soft"
+                              : "bg-background text-muted-foreground border-border hover:border-primary hover:text-primary"
+                          }`}
+                        >
+                          {item.name} · {item.price}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -365,8 +327,12 @@ const BookAppointment = () => {
 
           <Button type="submit" variant="hero" size="lg" className="w-full py-6 text-base">
             <Calendar className="mr-2 h-5 w-5" />
-            Request Appointment
+            Book Appointment
           </Button>
+          <p className="text-xs text-muted-foreground font-body text-center">
+            Booking adds the appointment to your phone calendar and sends it to Kim's WhatsApp
+            with a one-tap calendar link for her phone.
+          </p>
         </motion.form>
       </div>
     </div>

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Kim's Glam Lab</title>
+    <script>
+      // SPA fallback for GitHub Pages: remember the requested path, then load the app.
+      (function () {
+        sessionStorage.setItem(
+          "spa-redirect",
+          JSON.stringify({
+            pathname: location.pathname,
+            search: location.search,
+            hash: location.hash,
+          })
+        );
+        var m = location.pathname.match(/^\/[^/]+\//); // e.g. /pink-petal-studio/
+        location.replace(m ? m[0] : "/");
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
