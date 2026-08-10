@@ -250,6 +250,7 @@
       "createdAt": ""
     }
   ],
-  "blockedDays": [],
-  "reviews": []
+  "blockedDays": [
+    "2026-08-13"
+  ]
 }
