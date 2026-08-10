@@ -573,7 +573,7 @@ const ServicesTab = ({ data, requireToken }: { data: SiteData | null; requireTok
       .filter((c) => c.items.length > 0);
     setBusy(true);
     try {
-      const full = await fetchSiteData(true);
+      const full = await fetchSiteData(false);
       full.services = cleaned;
       await saveSiteData(full, "🛠️ Update services & prices");
       toast.success("Prices published to the live site ✅");
@@ -700,7 +700,7 @@ const ReviewsTab = ({ data, requireToken }: { data: SiteData | null; requireToke
     const cleaned = draft.filter((r) => r.name.trim() && r.text.trim());
     setBusy(true);
     try {
-      const full = await fetchSiteData(true);
+      const full = await fetchSiteData(false);
       full.reviews = cleaned;
       await saveSiteData(full, "⭐ Update reviews");
       toast.success("Reviews published to the live site ✅");
@@ -769,20 +769,28 @@ const ReviewsTab = ({ data, requireToken }: { data: SiteData | null; requireToke
 
 // ── Booked days ───────────────────────────────────────────────────────────────
 const DaysTab = ({ data, requireToken }: { data: SiteData | null; requireToken: () => boolean }) => {
-  const blockedDays = data?.blockedDays || [];
+  // local state = instant select AND unselect (no stale re-fetches)
+  const [local, setLocal] = useState<string[] | null>(null);
+  useEffect(() => {
+    if (data && local === null) setLocal(data.blockedDays);
+  }, [data, local]);
+
+  const blockedDays = local ?? data?.blockedDays ?? [];
   const blockedDates = useMemo(() => blockedDays.map((d) => new Date(d + "T00:00:00")), [blockedDays]);
 
   const handleToggle = async (d: Date | undefined) => {
     if (!d) return;
     if (!requireToken()) return;
     const ds = format(d, "yyyy-MM-dd");
+    const next = blockedDays.includes(ds)
+      ? blockedDays.filter((x) => x !== ds)
+      : [...blockedDays, ds];
+    setLocal(next); // optimistic — unselect works immediately
     try {
-      const full = await fetchSiteData(true);
-      full.blockedDays = full.blockedDays.includes(ds)
-        ? full.blockedDays.filter((x) => x !== ds)
-        : [...full.blockedDays, ds];
+      const full = await fetchSiteData(false);
+      full.blockedDays = next;
       await saveSiteData(full, "📅 Update booked days");
-      toast.success(full.blockedDays.includes(ds) ? "Day marked as unavailable" : "Day reopened");
+      toast.success(next.includes(ds) ? "Day marked as unavailable" : "Day reopened");
     } catch (e: any) {
       toast.error(e?.message || "Could not update day");
     }
@@ -827,7 +835,7 @@ const SettingsTab = ({ data, requireToken }: { data: SiteData | null; requireTok
     if (!requireToken()) return;
     setBusy(true);
     try {
-      const full = await fetchSiteData(true);
+      const full = await fetchSiteData(false);
       const digits = (draft.whatsappNumber || "").replace(/\D/g, "");
       full.settings = {
         ...draft,

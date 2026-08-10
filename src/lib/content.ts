@@ -396,13 +396,13 @@ export async function addGalleryImage(image: File | string, description: string)
   const id = crypto.randomUUID();
   const path = `${UPLOAD_DIR}${id}.jpg`;
   await commitBinaryFile(path, base64, `📸 Add photo: ${description.slice(0, 60)}`);
-  const data = await fetchSiteData(true);
+  const data = await fetchSiteData(false);
   data.gallery.unshift({ id, path, description, createdAt: new Date().toISOString() });
   await saveSiteData(data, `🖼️ Update gallery: add "${description.slice(0, 40)}"`);
 }
 
 export async function deleteGalleryImage(id: string): Promise<void> {
-  const data = await fetchSiteData(true);
+  const data = await fetchSiteData(false);
   const item = data.gallery.find((g) => g.id === id);
   if (!item) return;
   data.gallery = data.gallery.filter((g) => g.id !== id);
