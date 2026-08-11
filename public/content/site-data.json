@@ -138,6 +138,22 @@
           "duration": "2 hrs"
         }
       ]
+    },
+    {
+      "id": "cat-1786456582011",
+      "category": "Kids Hairstyles",
+      "items": [
+        {
+          "name": "Braids (Short/Medium)",
+          "price": "R",
+          "duration": "5 hrs"
+        },
+        {
+          "name": "Twists (Short/Medium)",
+          "price": "R",
+          "duration": "3 hrs"
+        }
+      ]
     }
   ],
   "gallery": [
