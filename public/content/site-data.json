@@ -178,6 +178,12 @@
   ],
   "gallery": [
     {
+      "id": "81494e8e-4106-4cde-b8f1-eb0b35626e5b",
+      "path": "public/content/uploads/81494e8e-4106-4cde-b8f1-eb0b35626e5b.jpg",
+      "description": "Volume clusters.🪄",
+      "createdAt": "2026-08-12T19:13:04.130Z"
+    },
+    {
       "id": "6673367a-8999-486a-aec7-aaf3596aa74b",
       "path": "public/content/uploads/6673367a-8999-486a-aec7-aaf3596aa74b.jpg",
       "description": "Gel-X😍",
@@ -194,12 +200,6 @@
       "path": "public/content/uploads/eff506ae-7d28-477e-9b3e-4ccad39630a1.jpg",
       "description": "Gel-X with full design.🖤",
       "createdAt": "2026-08-11T13:50:59.307Z"
-    },
-    {
-      "id": "8878b55c-68d8-4770-aad1-b6eddf208e10",
-      "path": "public/content/uploads/8878b55c-68d8-4770-aad1-b6eddf208e10.jpg",
-      "description": "Gel overlay with minimal design.",
-      "createdAt": "2026-08-11T13:49:56.023Z"
     },
     {
       "id": "cfe86f34-ad1a-4082-83b4-e3bf60c3730b",
