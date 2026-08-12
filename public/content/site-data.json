@@ -16,12 +16,12 @@
       "items": [
         {
           "name": "Gel Polish Manicure",
-          "price": "",
+          "price": "R200",
           "duration": "1 hr"
         },
         {
           "name": "Gel Polish Pedicure",
-          "price": "",
+          "price": "R200",
           "duration": "1 hr"
         },
         {
@@ -47,7 +47,27 @@
         {
           "name": "Soak-off",
           "price": "",
-          "duration": "30 min"
+          "duration": "45 min"
+        },
+        {
+          "name": "Buff and Shine With Art",
+          "price": "R",
+          "duration": "1 hr"
+        },
+        {
+          "name": "Short Nails (Gel-X)",
+          "price": "R",
+          "duration": "1 hr"
+        },
+        {
+          "name": "Medium Nails (Gel-X)",
+          "price": "R",
+          "duration": "1.5 hrs"
+        },
+        {
+          "name": "Long Nails (Gel-X)",
+          "price": "R",
+          "duration": "2 hrs"
         }
       ]
     },
@@ -58,22 +78,22 @@
         {
           "name": "Temporary/Strip",
           "price": "R50",
-          "duration": "20 min"
+          "duration": "10 min"
         },
         {
           "name": "Classic Cluster",
           "price": "R100",
-          "duration": "45 min"
+          "duration": "30 min"
         },
         {
           "name": "Cat-eye Cluster",
           "price": "R120",
-          "duration": "1 hr"
+          "duration": "45 min "
         },
         {
           "name": "Volume Cluster",
           "price": "R150",
-          "duration": "1.5 hrs"
+          "duration": "1 hr"
         }
       ]
     },
@@ -94,7 +114,7 @@
         {
           "name": "Dermaplaning/Shaving",
           "price": "R50",
-          "duration": "20 min"
+          "duration": "30 min"
         },
         {
           "name": "Wax & Tint",
